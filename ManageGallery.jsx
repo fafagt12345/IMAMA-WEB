@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { db, storage } from '../../firebase/config';
+import { db, storage } from './firebase/config';
 import { collection, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { useFetch } from '../../hooks/useFetch';
-import useFirebaseDeletion from '../../hooks/useFirebaseDeletion';
+import { useFetch } from './hooks/useFetch';
+import useFirebaseDeletion from './hooks/useFirebaseDeletion';
 
 const ManageGallery = () => {
   const [title, setTitle] = useState('');

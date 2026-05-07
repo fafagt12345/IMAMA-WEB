@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase/config';
+import { db } from './firebase/config';
 import { Calendar, ArrowLeft } from 'lucide-react';
 
 const NewsDetail = () => {

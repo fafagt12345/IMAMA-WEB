@@ -1,5 +1,5 @@
 import React from 'react';
-import HeroCarousel from '../components/HeroCarousel';
+import HeroCarousel from './HeroCarousel';
 
 const Home = () => {
   return (

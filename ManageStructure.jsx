@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { db, storage } from '../../firebase/config';
+import { db, storage } from './firebase/config';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { useFetch } from '../../hooks/useFetch'; // Menggunakan useFetch yang sudah ada
-import useFirebaseDeletion from '../../hooks/useFirebaseDeletion';
+import { useFetch } from './hooks/useFetch'; // Menggunakan useFetch yang sudah ada
+import useFirebaseDeletion from './hooks/useFirebaseDeletion';
 
 const getStoragePathFromUrl = (downloadUrl) => {
   if (!downloadUrl) return '';
