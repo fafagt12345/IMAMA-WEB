@@ -5,6 +5,17 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { useFetch } from '../../hooks/useFetch';
 import useFirebaseDeletion from '../../hooks/useFirebaseDeletion';
 
+const getStoragePathFromUrl = (downloadUrl) => {
+  if (!downloadUrl) return '';
+  try {
+    const parsedUrl = new URL(downloadUrl);
+    const match = parsedUrl.pathname.match(/\/o\/(.+)$/);
+    return match ? decodeURIComponent(match[1]) : downloadUrl;
+  } catch {
+    return downloadUrl;
+  }
+};
+
 const ManageNews = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -31,7 +42,7 @@ const ManageNews = () => {
       if (image) {
         // Hapus foto lama jika sedang edit dan upload foto baru
         if (currentImageUrl) {
-          const oldRef = ref(storage, currentImageUrl);
+          const oldRef = ref(storage, getStoragePathFromUrl(currentImageUrl));
           try { await deleteObject(oldRef); } catch (err) { console.log(err); }
         }
 

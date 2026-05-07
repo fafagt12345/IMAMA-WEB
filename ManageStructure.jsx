@@ -5,6 +5,17 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { useFetch } from '../../hooks/useFetch'; // Menggunakan useFetch yang sudah ada
 import useFirebaseDeletion from '../../hooks/useFirebaseDeletion';
 
+const getStoragePathFromUrl = (downloadUrl) => {
+  if (!downloadUrl) return '';
+  try {
+    const parsedUrl = new URL(downloadUrl);
+    const match = parsedUrl.pathname.match(/\/o\/(.+)$/);
+    return match ? decodeURIComponent(match[1]) : downloadUrl;
+  } catch {
+    return downloadUrl;
+  }
+};
+
 const ManageStructure = () => {
   const [activeTab, setActiveTab] = useState('departments'); // 'departments' or 'members'
 
@@ -99,7 +110,7 @@ const ManageStructure = () => {
       if (memberPhoto) {
         // Hapus foto lama jika ada dan foto baru diupload
         if (currentMemberPhotoUrl) {
-          const oldPhotoRef = ref(storage, currentMemberPhotoUrl);
+          const oldPhotoRef = ref(storage, getStoragePathFromUrl(currentMemberPhotoUrl));
           try {
             await deleteObject(oldPhotoRef);
           } catch (error) {
