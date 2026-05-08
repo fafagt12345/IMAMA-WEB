@@ -1,0 +1,59 @@
+type User @table {
+  authId: String!
+  displayName: String!
+  email: String!
+  role: String!
+  photoUrl: String
+  studyProgram: String
+  magetanOrigin: String
+  position: String
+  department: Department
+}
+
+type Department @table {
+  name: String!
+  description: String!
+  mission: String
+  vision: String
+}
+
+type Article @table {
+  title: String!
+  content: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  isPublished: Boolean!
+  imageUrl: String
+  tags: [String]
+  author: User
+}
+
+type Event @table {
+  title: String!
+  description: String!
+  startDate: Timestamp!
+  endDate: Timestamp!
+  location: String!
+  createdAt: Timestamp!
+  imageUrl: String
+  registrationLink: String
+  creator: User
+  responsibleDepartment: Department
+}
+
+type GalleryImage @table {
+  imageUrl: String!
+  caption: String!
+  uploadedAt: Timestamp!
+  eventName: String
+  uploader: User
+  event: Event
+}
+
+type Alumni @table {
+  name: String!
+  graduationYear: Int!
+  achievements: String!
+  currentOccupation: String
+  contactInfo: String
+}

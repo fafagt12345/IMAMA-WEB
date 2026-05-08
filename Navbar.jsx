@@ -5,6 +5,15 @@ import { auth } from './firebase/config';
 import { signOut } from 'firebase/auth';
 import { Menu, X, User, LogOut } from 'lucide-react';
 
+const NAV_LINKS = [
+  { name: 'Beranda', path: '/' },
+  { name: 'Tentang', path: '/tentang' },
+  { name: 'Struktur', path: '/struktur' },
+  { name: 'Berita', path: '/berita' },
+  { name: 'Program', path: '/program-kerja' },
+  { name: 'Kontak', path: '/kontak' },
+];
+
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -19,18 +28,14 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    navigate('/');
+    try {
+      await signOut(auth);
+      setIsOpen(false);
+      navigate('/');
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
-
-  const navLinks = [
-    { name: 'Beranda', path: '/' },
-    { name: 'Tentang', path: '/tentang' },
-    { name: 'Struktur', path: '/struktur' },
-    { name: 'Berita', path: '/berita' },
-    { name: 'Program', path: '/program-kerja' },
-    { name: 'Kontak', path: '/kontak' },
-  ];
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled || isOpen ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'}`}>
@@ -41,7 +46,7 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <Link key={link.path} to={link.path} className={`font-medium transition-colors hover:text-emerald-500 ${isScrolled ? 'text-gray-700' : 'text-white'}`}>
               {link.name}
             </Link>
@@ -71,7 +76,13 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden bg-white border-t mt-3 flex flex-col p-6 space-y-4 shadow-xl">
-          {navLinks.map((link) => (
+          {user && (
+            <div className="flex items-center justify-between p-2 bg-emerald-50 rounded-lg">
+              <span className="text-emerald-900 font-semibold flex items-center gap-2"><User size={18}/> Admin</span>
+              <button onClick={handleLogout} className="text-red-500"><LogOut size={18}/></button>
+            </div>
+          )}
+          {NAV_LINKS.map((link) => (
             <Link key={link.path} to={link.path} onClick={() => setIsOpen(false)} className="text-gray-700 font-medium text-lg border-b pb-2 italic">{link.name}</Link>
           ))}
         </div>

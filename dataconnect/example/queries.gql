@@ -1,0 +1,45 @@
+query ListAllDepartments @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  departments {
+    id
+    name
+    description
+    mission
+    vision
+  }
+}
+
+query GetMyUserProfile @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  user(where: { authId: { eq_expr: "auth.uid" } }) {
+    id
+    displayName
+    email
+    role
+    department {
+      name
+    }
+  }
+}
+
+mutation CreateNewAlumniProfile($name: String!, $graduationYear: Int!, $achievements: String!) @auth(level: USER) {
+  alumni_insert(data: {
+    name: $name,
+    graduationYear: $graduationYear,
+    achievements: $achievements
+  }) {
+    id
+  }
+}
+
+mutation UpdateMyArticle($articleId: UUID!, $newContent: String!) @auth(expr: "auth.uid == response.currentArticle.author.authId") {
+  currentArticle: article(id: $articleId) {
+    author {
+      authId
+    }
+  }
+  article_update(
+    id: $articleId,
+    data: { content: $newContent }
+  ) {
+    id
+  }
+}

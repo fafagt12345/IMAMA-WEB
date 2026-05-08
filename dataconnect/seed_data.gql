@@ -1,0 +1,123 @@
+mutation CreateDemoData @transaction @auth(level: PUBLIC, insecureReason: "This is seed data and does not require user authentication.") {
+  user_insertMany(data: [
+    {
+      id: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      authId: "firebase_auth_id_1",
+      displayName: "Alice Smith",
+      email: "alice.smith@example.com",
+      role: "student",
+      studyProgram: "Informatics Engineering"
+    },
+    {
+      id: "b1cffc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      authId: "firebase_auth_id_2",
+      displayName: "Bob Johnson",
+      email: "bob.johnson@example.com",
+      role: "lecturer",
+      departmentId: "c2ddef99-9c0b-4ef8-bb6d-6bb9bd380a33"
+    },
+    {
+      id: "c2ddef99-9c0b-4ef8-bb6d-6bb9bd380a44",
+      authId: "firebase_auth_id_3",
+      displayName: "Charlie Brown",
+      email: "charlie.brown@example.com",
+      role: "alumni",
+      magetanOrigin: "Magetan",
+      graduationYear: 2020 # Assuming graduationYear can be added to user data for alumni
+    }
+  ])
+  department_insertMany(data: [
+    {
+      id: "c2ddef99-9c0b-4ef8-bb6d-6bb9bd380a33",
+      name: "Computer Science",
+      description: "Department of Computer Science",
+      mission: "Advance computing knowledge",
+      vision: "Leading research in AI"
+    },
+    {
+      id: "d3eeff99-9c0b-4ef8-bb6d-6bb9bd380a55",
+      name: "Electrical Engineering",
+      description: "Department of Electrical Engineering"
+    }
+  ])
+  article_insertMany(data: [
+    {
+      id: "e4ff0099-9c0b-4ef8-bb6d-6bb9bd380a66",
+      title: "Introduction to AI",
+      content: "This article covers the basics of Artificial Intelligence.",
+      createdAt: "2023-01-15T10:00:00Z",
+      updatedAt: "2023-01-15T10:00:00Z",
+      isPublished: true,
+      authorId: "b1cffc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      tags: ["AI", "Machine Learning"]
+    },
+    {
+      id: "f5011199-9c0b-4ef8-bb6d-6bb9bd380a77",
+      title: "Web Development with React",
+      content: "A guide to building modern web applications using React.",
+      createdAt: "2023-02-20T11:30:00Z",
+      updatedAt: "2023-02-20T11:30:00Z",
+      isPublished: true,
+      authorId: "a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11",
+      tags: ["Web Development", "React"]
+    }
+  ])
+  event_insertMany(data: [
+    {
+      id: "a6122299-9c0b-4ef8-bb6d-6bb9bd380a88",
+      title: "AI Workshop 2023",
+      description: "An interactive workshop on the latest AI trends.",
+      startDate: "2023-03-10T09:00:00Z",
+      endDate: "2023-03-10T17:00:00Z",
+      location: "Main Auditorium",
+      createdAt: "2023-01-05T08:00:00Z",
+      registrationLink: "https://example.com/ai-workshop",
+      creatorId: "b1cffc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      responsibleDepartmentId: "c2ddef99-9c0b-4ef8-bb6d-6bb9bd380a33"
+    },
+    {
+      id: "b7233399-9c0b-4ef8-bb6d-6bb9bd380a99",
+      title: "Career Fair",
+      description: "Connect with leading companies for internships and jobs.",
+      startDate: "2023-04-01T10:00:00Z",
+      endDate: "2023-04-01T16:00:00Z",
+      location: "University Hall",
+      createdAt: "2023-02-15T12:00:00Z"
+    }
+  ])
+  galleryImage_insertMany(data: [
+    {
+      id: "c8344499-9c0b-4ef8-bb6d-6bb9bd380b00",
+      imageUrl: "https://example.com/ai-workshop-image1.jpg",
+      caption: "Participants at the AI Workshop",
+      uploadedAt: "2023-03-10T14:00:00Z",
+      eventId: "a6122299-9c0b-4ef8-bb6d-6bb9bd380a88",
+      uploaderId: "b1cffc99-9c0b-4ef8-bb6d-6bb9bd380a22",
+      eventName: "AI Workshop 2023"
+    },
+    {
+      id: "d9455599-9c0b-4ef8-bb6d-6bb9bd380b11",
+      imageUrl: "https://example.com/career-fair-image1.jpg",
+      caption: "Career Fair booths",
+      uploadedAt: "2023-04-01T13:00:00Z",
+      eventName: "Career Fair"
+    }
+  ])
+  alumni_insertMany(data: [
+    {
+      id: "e0566699-9c0b-4ef8-bb6d-6bb9bd380b22",
+      name: "Emily White",
+      graduationYear: 2018,
+      achievements: "Software Engineer at Google",
+      currentOccupation: "Software Engineer",
+      contactInfo: "emily.white@example.com"
+    },
+    {
+      id: "f1677799-9c0b-4ef8-bb6d-6bb9bd380b33",
+      name: "David Green",
+      graduationYear: 2019,
+      achievements: "Data Scientist at Microsoft",
+      currentOccupation: "Data Scientist"
+    }
+  ])
+}
