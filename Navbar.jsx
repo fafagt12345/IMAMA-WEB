@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import { auth } from './firebase/config';
+import { auth } from './config';
 import { signOut } from 'firebase/auth';
 import { Menu, X, User, LogOut } from 'lucide-react';
 
 const NAV_LINKS = [
   { name: 'Beranda', path: '/' },
-  { name: 'Tentang', path: '/tentang' },
+  { name: 'Tentang', path: '/#about' },
   { name: 'Struktur', path: '/struktur' },
-  { name: 'Berita', path: '/berita' },
   { name: 'Program', path: '/program-kerja' },
   { name: 'Kontak', path: '/kontak' },
 ];
@@ -85,6 +84,11 @@ const Navbar = () => {
           {NAV_LINKS.map((link) => (
             <Link key={link.path} to={link.path} onClick={() => setIsOpen(false)} className="text-gray-700 font-medium text-lg border-b pb-2 italic">{link.name}</Link>
           ))}
+          {!user && (
+            <Link to="/login" onClick={() => setIsOpen(false)} className="bg-emerald-700 text-white text-center py-3 rounded-xl font-bold shadow-lg">
+              Login Admin
+            </Link>
+          )}
         </div>
       )}
     </nav>

@@ -5,12 +5,9 @@ import Home from './Home';
 import Login from './Login';
 import AdminDashboard from './AdminDashboard';
 import ManageStructure from './ManageStructure';
-import ManageNews from './ManageNews';
+import ManageDepartments from './ManageDepartments';
 import Structure from './Structure';
 import Navbar from './Navbar';
-import NewsList from './NewsList';
-import NewsDetail from './NewsDetail';
-import About from './About';
 import Gallery from './Gallery';
 import ManageGallery from './ManageGallery';
 import Programs from './Programs';
@@ -23,17 +20,14 @@ import Footer from './Footer';
 function App() {
   return (
     <AuthProvider>
-      <Router>
+      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/tentang" element={<About />} />
           <Route path="/galeri" element={<Gallery />} />
           <Route path="/program-kerja" element={<Programs />} />
           <Route path="/struktur" element={<Structure />} />
-          <Route path="/berita" element={<NewsList />} />
-          <Route path="/berita/:id" element={<NewsDetail />} />
           <Route path="/kontak" element={<Contact />} />
           
           {/* Halaman Admin yang Dilindungi */}
@@ -42,14 +36,14 @@ function App() {
               <AdminDashboard />
             </ProtectedRoute>
           } />
-          <Route path="/admin/news" element={
-            <ProtectedRoute>
-              <ManageNews />
-            </ProtectedRoute>
-          } />
           <Route path="/admin/structure" element={
             <ProtectedRoute>
               <ManageStructure />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/departments" element={
+            <ProtectedRoute>
+              <ManageDepartments />
             </ProtectedRoute>
           } />
           <Route path="/admin/gallery" element={

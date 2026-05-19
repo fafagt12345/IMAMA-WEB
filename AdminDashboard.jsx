@@ -1,17 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useFetch } from './hooks/useFetch';
-import { Newspaper, Users, Image as ImageIcon, Info, Briefcase, Phone } from 'lucide-react';
+import { Users, Image as ImageIcon, Info, Briefcase, Phone, LayoutDashboard, LayoutGrid } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { data: news } = useFetch('news');
-  const { data: members } = useFetch('members');
-  const { data: gallery } = useFetch('gallery');
-  const { data: programs } = useFetch('programs');
-  const { data: departments } = useFetch('departments');
+  const { data: members = [] } = useFetch('members');
+  const { data: gallery = [] } = useFetch('gallery');
+  const { data: programs = [] } = useFetch('programs');
+  const { data: departments = [] } = useFetch('departments');
 
   const stats = [
-    { label: 'Total Berita', count: news.length, icon: <Newspaper />, color: 'bg-blue-500' },
     { label: 'Total Pengurus', count: members.length, icon: <Users />, color: 'bg-emerald-500' },
     { label: 'Total Foto', count: gallery.length, icon: <ImageIcon />, color: 'bg-purple-500' },
     { label: 'Total Program', count: programs.length, icon: <Briefcase />, color: 'bg-orange-500' },
@@ -43,13 +41,6 @@ const AdminDashboard = () => {
       <h3 className="text-xl font-bold mb-6 text-emerald-800 uppercase tracking-wider">Manajemen Konten</h3>
       <p className="text-gray-700 mb-6">Selamat datang di dashboard admin IMAMA UNESA. Pilih menu di bawah untuk mengelola konten website Anda.</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link to="/admin/news" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <Newspaper /> Kelola Berita
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Update warta dan kegiatan terbaru IMAMA.</p>
-        </Link>
-
         <Link to="/admin/structure" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
           <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
             <Users /> Kelola Pengurus
@@ -83,6 +74,13 @@ const AdminDashboard = () => {
             <Phone /> Kelola Kontak
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Update nomor WA, Email, dan link Sosmed.</p>
+        </Link>
+
+        <Link to="/admin/departments" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <LayoutGrid /> Kelola Departemen
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur nama-nama departemen organisasi.</p>
         </Link>
 
         {/* Tambahkan link ke halaman manajemen lainnya di sini */}

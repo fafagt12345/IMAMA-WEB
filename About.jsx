@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Flag, History, Award } from 'lucide-react';
-import { db } from './firebase/config';
+import { db } from './config';
 import { doc, getDoc } from 'firebase/firestore';
 
 const About = () => {
@@ -10,12 +10,17 @@ const About = () => {
 
   useEffect(() => {
     const fetchAbout = async () => {
-      const docRef = doc(db, 'settings', 'about');
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setAboutData(docSnap.data());
+      try {
+        const docRef = doc(db, 'settings', 'about');
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setAboutData(docSnap.data());
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data About:", error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchAbout();
   }, []);
@@ -36,7 +41,7 @@ const About = () => {
   if (loading) return <div className="h-screen flex items-center justify-center">Memuat...</div>;
 
   return (
-    <div className="pt-24 pb-20 bg-white min-h-screen">
+    <div id="about" className="py-20 bg-white">
       {/* Hero Section */}
       <section className="container mx-auto px-6 mb-20 text-center">
         <motion.h1 

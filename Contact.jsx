@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { db } from './firebase/config';
+import { db } from './config';
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
 import { Phone, Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
@@ -10,9 +10,14 @@ const Contact = () => {
 
   useEffect(() => {
     const fetchContact = async () => {
-      const docSnap = await getDoc(doc(db, 'settings', 'contact'));
-      if (docSnap.exists()) setContact(docSnap.data());
-      setLoading(false);
+      try {
+        const docSnap = await getDoc(doc(db, 'settings', 'contact'));
+        if (docSnap.exists()) setContact(docSnap.data());
+      } catch (error) {
+        console.error("Gagal mengambil data Kontak:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchContact();
   }, []);

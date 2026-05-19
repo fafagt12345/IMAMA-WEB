@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { db, storage } from './firebase/config';
+import { db, storage } from './config';
 import { collection, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useFetch } from './hooks/useFetch';
@@ -19,7 +19,7 @@ const ManageGallery = () => {
       return alert("Harap unggah file gambar yang valid!");
     }
 
-    setIsSubmitting(true);
+    setLoading(true);
 
     try {
       const storageRef = ref(storage, `gallery/${Date.now()}_${image.name}`);
@@ -38,7 +38,7 @@ const ManageGallery = () => {
       console.error("Gallery Upload Error:", error);
       alert(`Gagal upload: ${error.message}`);
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -55,8 +55,8 @@ const ManageGallery = () => {
           <label className="block text-gray-700 font-semibold mb-2">Pilih Foto</label>
           <input type="file" onChange={(e) => setImage(e.target.files[0])} className="w-full text-sm" required />
         </div>
-        <button disabled={isSubmitting} className="w-full bg-emerald-700 text-white font-bold py-2 rounded-lg hover:bg-emerald-800 transition disabled:bg-gray-400">
-          {isSubmitting ? "Mengunggah..." : "Tambah Foto"}
+        <button disabled={loading} className="w-full bg-emerald-700 text-white font-bold py-2 rounded-lg hover:bg-emerald-800 transition disabled:bg-gray-400">
+          {loading ? "Mengunggah..." : "Tambah Foto"}
         </button>
       </form>
 
