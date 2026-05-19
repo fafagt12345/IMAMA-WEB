@@ -7,8 +7,8 @@ import { LayoutGrid, Edit, Trash2 } from 'lucide-react';
 const ManageDepartments = () => {
   const { data: departments = [] } = useFetch('departments');
   const [deptName, setDeptName] = useState('');
+  const [deptDescription, setDeptDescription] = useState('');
   const [editingId, setEditingId] = useState(null);
-  const [deptDescription, setDeptDescription] = useState(''); // State baru untuk deskripsi
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -18,19 +18,19 @@ const ManageDepartments = () => {
       if (editingId) {
         await updateDoc(doc(db, 'departments', editingId), {
           name: deptName,
-          description: deptDescription, // Tambahkan deskripsi saat update
+          description: deptDescription,
           updatedAt: serverTimestamp()
         });
         setEditingId(null);
       } else {
         await addDoc(collection(db, 'departments'), {
           name: deptName,
-          description: deptDescription, // Tambahkan deskripsi saat tambah baru
+          description: deptDescription,
           createdAt: serverTimestamp()
         });
       }
       setDeptName('');
-      setDeptDescription(''); // Reset deskripsi setelah submit
+      setDeptDescription('');
     } catch (error) {
       console.error("Error:", error);
       alert("Gagal menyimpan departemen");
@@ -40,9 +40,9 @@ const ManageDepartments = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm("Hapus departemen ini? Anggota di dalamnya mungkin akan kehilangan referensi.")) {
+    if (window.confirm("Hapus departemen ini?")) {
       await deleteDoc(doc(db, 'departments', id));
-      setDeptName(''); // Reset form jika item yang diedit dihapus
+      setDeptName('');
       setDeptDescription('');
       setEditingId(null);
     }
@@ -65,11 +65,11 @@ const ManageDepartments = () => {
             required 
           />
           <textarea
-            placeholder="Deskripsi Departemen (Contoh: Bertanggung jawab atas pengembangan sumber daya anggota)"
+            placeholder="Deskripsi Departemen..."
             value={deptDescription}
             onChange={(e) => setDeptDescription(e.target.value)}
             className="w-full p-2 border rounded focus:ring-2 focus:ring-emerald-500 outline-none"
-            rows="3" // Memberikan tinggi awal untuk textarea
+            rows="3"
           ></textarea>
           <div className="flex items-center gap-3">
             <button 
@@ -79,7 +79,7 @@ const ManageDepartments = () => {
             >
               {isLoading ? '...' : (editingId ? 'Update' : 'Tambah')}
             </button>
-            {editingId && ( // Tombol batal untuk mode edit
+            {editingId && (
               <button type="button" onClick={() => {setEditingId(null); setDeptName(''); setDeptDescription('');}} className="text-gray-500 text-sm hover:underline">Batal</button>
             )}
           </div>
@@ -89,32 +89,28 @@ const ManageDepartments = () => {
           <table className="w-full text-left">
             <thead className="bg-emerald-50 text-emerald-900">
               <tr>
-                <th className="p-4 font-bold uppercase text-xs">Nama Departemen</th>
+                <th className="p-4 font-bold uppercase text-xs">Nama</th>
                 <th className="p-4 font-bold uppercase text-xs">Deskripsi</th>
                 <th className="p-4 text-right font-bold uppercase text-xs">Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {departments.map((d) => (
-                <tr key={d.id} className="border-t hover:bg-gray-50 transition">
-                  <td className="p-4 font-medium text-gray-700">{d.name}</td>
-                  <td className="p-4 text-gray-600 text-sm">{d.description || '-'}</td> {/* Tampilkan deskripsi */}
-                  <td className="p-4 text-right space-x-4">
-                    <button 
-                      onClick={() => { setEditingId(d.id); setDeptName(d.name); setDeptDescription(d.description || ''); }} // Isi deskripsi saat edit
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      <Edit size={18} />
-                    </button>
-                    <button 
-                      onClick={() => handleDelete(d.id)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
+              {departments.length > 0 ? (
+                departments.map((d) => (
+                  <tr key={d.id} className="border-t hover:bg-gray-50 transition">
+                    <td className="p-4 font-medium text-gray-700">{d.name}</td>
+                    <td className="p-4 text-gray-600 text-sm">{d.description || '-'}</td>
+                    <td className="p-4 text-right space-x-4">
+                      <button onClick={() => { setEditingId(d.id); setDeptName(d.name); setDeptDescription(d.description || ''); }} className="text-blue-600 hover:text-blue-800"><Edit size={18} /></button>
+                      <button onClick={() => handleDelete(d.id)} className="text-red-600 hover:text-red-800"><Trash2 size={18} /></button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="p-8 text-center text-gray-400 italic">Belum ada departemen yang ditambahkan.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
