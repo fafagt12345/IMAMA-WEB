@@ -97,37 +97,6 @@ const ManageHistory = () => {
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">Filosofi Logo</label>
-            <div className="space-y-4">
-              {philosophy.map((p, index) => (
-                <div key={index} className="p-4 border rounded-xl bg-gray-50 space-y-2">
-                  <input
-                    type="text"
-                    value={p.title}
-                    onChange={(e) => handlePhilChange(index, 'title', e.target.value)}
-                    className="w-full p-3 border rounded-xl"
-                    placeholder="Judul Filosofi"
-                    required
-                  />
-                  <textarea
-                    value={p.desc}
-                    onChange={(e) => handlePhilChange(index, 'desc', e.target.value)}
-                    className="w-full p-3 border rounded-xl h-24"
-                    placeholder="Deskripsi Filosofi"
-                    required
-                  />
-                  <button type="button" onClick={() => handleRemovePhilosophy(index)} className="text-red-500 flex items-center gap-1 text-sm">
-                    <Trash2 size={16} /> Hapus Poin
-                  </button>
-                </div>
-              ))}
-            </div>
-            <button type="button" onClick={handleAddPhilosophy} className="mt-4 text-emerald-600 font-semibold text-sm flex items-center gap-1">
-              <Plus size={16} /> Tambah Poin Filosofi
-            </button>
-          </div>
-
           <button type="submit" disabled={isLoading} className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl hover:bg-emerald-800 transition shadow-lg flex items-center justify-center gap-2">
             <Save size={20} /> {isLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
           </button>
