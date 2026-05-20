@@ -1,104 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { db, storage } from './config';
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { db } from './config';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { LayoutGrid, Save } from 'lucide-react';
 
 const ManageAbout = () => {
-  const [logo, setLogo] = useState(null);
-  const [currentLogoUrl, setCurrentLogoUrl] = useState('');
-  const [history, setHistory] = useState('');
-  const [philosophy, setPhilosophy] = useState([
-    { title: 'Warna Hijau', desc: '' },
-    { title: 'Gunung Lawu', desc: '' },
-    { title: 'Lingkaran', desc: '' }
-  ]);
-  const [loading, setLoading] = useState(false);
+  const [vision, setVision] = useState('');
+  const [mission, setMission] = useState(['']);
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
-    const fetchAbout = async () => {
+    const fetchData = async () => {
       const docRef = doc(db, 'settings', 'about');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setHistory(data.history || '');
-        setPhilosophy(data.philosophy || philosophy);
-        setCurrentLogoUrl(data.logoUrl || '');
+        setVision(data.vision || '');
+        setMission(data.mission || ['']);
       }
     };
-    fetchAbout();
+    fetchData();
   }, []);
 
-  const handleUpdatePhilosophy = (index, value) => {
-    const newPhilosophy = [...philosophy];
-    newPhilosophy[index].desc = value;
-    setPhilosophy(newPhilosophy);
+  const handleAddMission = () => setMission([...mission, '']);
+  const handleRemoveMission = (index) => {
+    const newMission = mission.filter((_, i) => i !== index);
+    setMission(newMission.length ? newMission : ['']);
+  };
+  const handleMissionChange = (index, value) => {
+    const newMission = [...mission];
+    newMission[index] = value;
+    setMission(newMission);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    setIsLoading(true);
+    setMessage({ type: '', text: '' });
 
     try {
-      let logoUrl = currentLogoUrl;
-      if (logo) {
-        const storageRef = ref(storage, `settings/logo_${Date.now()}`);
-        await uploadBytes(storageRef, logo);
-        logoUrl = await getDownloadURL(storageRef);
-      }
-
       await setDoc(doc(db, 'settings', 'about'), {
-        history,
-        philosophy,
-        logoUrl,
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-
-      alert("Halaman Tentang berhasil diperbarui!");
-    } catch (error) {
-      console.error(error);
-      alert("Gagal memperbarui data.");
+        vision,
+        mission: mission.filter(m => m.trim() !== ''),
+        updatedAt: new Date()
+      });
+      setMessage({ type: 'success', text: 'Visi & Misi berhasil diperbarui!' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Gagal menyimpan: ' + err.message });
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="p-8 bg-gray-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6 text-emerald-900">Kelola Halaman Tentang</h2>
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-md max-w-4xl">
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">Upload Logo Organisasi</label>
-          <input type="file" onChange={(e) => setLogo(e.target.files[0])} className="mb-2 text-sm" />
-          {currentLogoUrl && <img src={currentLogoUrl} alt="Logo" className="h-20 bg-gray-100 p-2 rounded" />}
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
+            <LayoutGrid size={24} />
+          </div>
+          <h1 className="text-2xl font-bold text-emerald-900">Kelola Visi & Misi</h1>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-gray-700 font-semibold mb-2">Sejarah Singkat</label>
-          <textarea 
-            value={history} 
-            onChange={(e) => setHistory(e.target.value)} 
-            className="w-full p-2 border rounded h-32"
-          />
-        </div>
+        <form onSubmit={handleSave} className="space-y-6">
+          {message.text && (
+            <div className={`p-4 rounded-xl text-sm ${message.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+              {message.text}
+            </div>
+          )}
 
-        <h3 className="text-lg font-bold text-emerald-800 mb-4">Filosofi Warna & Logo</h3>
-        {philosophy.map((item, index) => (
-          <div key={index} className="mb-4 p-4 border rounded-lg bg-emerald-50">
-            <label className="block font-bold text-emerald-900 mb-1">{item.title}</label>
-            <input 
-              type="text" 
-              placeholder="Masukkan penjelasan..."
-              value={item.desc}
-              onChange={(e) => handleUpdatePhilosophy(index, e.target.value)}
-              className="w-full p-2 border rounded"
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Visi Organisasi</label>
+            <textarea
+              value={vision}
+              onChange={(e) => setVision(e.target.value)}
+              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all h-32"
+              placeholder="Masukkan visi IMAMA UNESA..."
+              required
             />
           </div>
-        ))}
 
-        <button disabled={loading} className="w-full bg-emerald-700 text-white font-bold py-3 rounded-lg hover:bg-emerald-800 transition">
-          {loading ? "Menyimpan..." : "Simpan Perubahan"}
-        </button>
-      </form>
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">Misi Organisasi</label>
+            <div className="space-y-3">
+              {mission.map((m, index) => (
+                <div key={index} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={m}
+                    onChange={(e) => handleMissionChange(index, e.target.value)}
+                    className="flex-1 p-3 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                    placeholder={`Misi ke-${index + 1}`}
+                    required
+                  />
+                  <button type="button" onClick={() => handleRemoveMission(index)} className="p-3 text-red-500 hover:bg-red-50 rounded-xl transition-colors">
+                    Hapus
+                  </button>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={handleAddMission} className="mt-4 text-emerald-600 font-semibold text-sm hover:underline">
+              + Tambah Poin Misi
+            </button>
+          </div>
+
+          <button type="submit" disabled={isLoading} className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl hover:bg-emerald-800 transition shadow-lg flex items-center justify-center gap-2">
+            <Save size={20} /> {isLoading ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

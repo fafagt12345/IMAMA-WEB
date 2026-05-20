@@ -132,7 +132,7 @@ const About = () => {
                 <Target /> Visi
               </h2>
               <p className="text-lg text-emerald-50 leading-relaxed font-light">
-                Mewujudkan IMAMA UNESA sebagai organisasi kedaerahan yang unggul, adaptif, dan kontributif dalam membentuk karakter mahasiswa yang berintegritas serta berjiwa sosial tinggi demi kemajuan Magetan.
+              {aboutData?.vision || "Mewujudkan IMAMA UNESA sebagai organisasi kedaerahan yang unggul, adaptif, dan kontributif dalam membentuk karakter mahasiswa yang berintegritas serta berjiwa sosial tinggi demi kemajuan Magetan."}
               </p>
             </div>
           </motion.div>
@@ -148,12 +148,12 @@ const About = () => {
               <Flag /> Misi
             </h2>
             <ul className="space-y-4">
-              {[
+          {(aboutData?.mission?.length > 0 ? aboutData.mission : [
                 "Mempererat tali silaturahmi antar mahasiswa Magetan di UNESA.",
                 "Menyelenggarakan kegiatan pengembangan minat dan bakat anggota.",
                 "Berperan aktif dalam kegiatan sosial dan promosi daerah Magetan.",
                 "Menjalin kolaborasi strategis dengan organisasi kedaerahan lainnya."
-              ].map((misi, idx) => (
+          ]).map((misi, idx) => (
                 <motion.li key={idx} variants={itemVariants} className="flex gap-4 text-gray-700">
                   <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">{idx + 1}</div>
                   <span>{misi}</span>
