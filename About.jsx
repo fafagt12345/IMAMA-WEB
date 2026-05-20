@@ -28,6 +28,36 @@ const About = () => {
     visible: { opacity: 1, x: 0 }
   };
 
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Flag, Target, BookOpen, Lightbulb } from 'lucide-react';
+import { db } from './config';
+import { doc, onSnapshot } from 'firebase/firestore';
+
+const About = () => {
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'settings', 'about'), (docSnap) => {
+      if (docSnap.exists()) {
+        setAboutData(docSnap.data());
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 }
+  };
+
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50 pt-20">
@@ -59,6 +89,73 @@ const About = () => {
   const logoUrl = aboutData?.logoUrl || defaultLogoUrl;
 
   return (
+    <section id="about" className="py-20 bg-white pt-24">
+      <div className="container mx-auto px-6">
+        <h1 className="text-4xl font-bold text-center text-emerald-900 mb-12">Tentang IMAMA UNESA</h1>
+
+        <motion.div 
+          className="grid md:grid-cols-2 gap-12 mb-20"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <div className="p-10 bg-emerald-900 rounded-[3rem] shadow-xl text-white">
+            <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 italic">
+              <Target /> Visi
+            </h2>
+            <p className="text-lg leading-relaxed font-light">{vision}</p>
+          </div>
+
+          <motion.div variants={containerVariants} className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg">
+            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+              <Flag /> Misi
+            </h2>
+            <ul className="space-y-4">
+              {mission.map((misi, idx) => (
+                <motion.li key={idx} variants={itemVariants} className="flex gap-4 text-gray-700">
+                  <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">{idx + 1}</div>
+                  <span>{misi}</span>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        </motion.div>
+
+        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+              <BookOpen /> Sejarah
+            </h2>
+            <p className="text-gray-700 leading-relaxed">{history}</p>
+          </motion.div>
+          <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="flex justify-center">
+            <img src={logoUrl} alt="Logo" className="max-w-xs h-auto rounded-full shadow-lg border-4 border-emerald-100" />
+          </motion.div>
+        </div>
+
+        <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg">
+          <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+            <Lightbulb /> Filosofi Logo
+          </h2>
+          <ul className="space-y-4">
+            {philosophy.map((item, idx) => (
+              <motion.li key={idx} variants={itemVariants} className="flex gap-4 text-gray-700">
+                <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">{idx + 1}</div>
+                <div>
+                  <h4 className="font-bold">{item.title}</h4>
+                  <p className="text-sm">{item.desc}</p>
+                </div>
+              </motion.li>
+            ))}
+          </ul>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
+export default About;
     <section id="about" className="py-20 bg-white pt-24">
       <div className="container mx-auto px-6">
         <h1 className="text-4xl font-bold text-center text-emerald-900 mb-12">Tentang IMAMA UNESA</h1>

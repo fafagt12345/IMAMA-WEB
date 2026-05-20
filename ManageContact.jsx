@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { Phone, Save, Mail, MapPin, Instagram, TikTok, Whatsapp } from 'lucide-react'; // Import icons for social media
+import { Phone, Save, Mail, MapPin, Instagram, MessageCircle } from 'lucide-react'; // Import icons for social media
 
 const ManageContact = () => {
   const [address, setAddress] = useState('');
@@ -48,7 +48,7 @@ const ManageContact = () => {
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="contoh@imama.org" />
             </div>
             <div>
-              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2"><Whatsapp size={16} /> WhatsApp (tanpa +)</label>
+              <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2"><MessageCircle size={16} /> WhatsApp (tanpa +)</label>
               <input type="text" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="6281234567890" />
             </div>
           </div>
