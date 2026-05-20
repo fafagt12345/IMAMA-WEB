@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, BookOpen } from 'lucide-react';
+import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, BookOpen, Lightbulb } from 'lucide-react';
 import { useFetch } from './hooks/useFetch';
 
 const AdminDashboard = () => {
@@ -59,6 +59,13 @@ const AdminDashboard = () => {
             <BookOpen /> Kelola Sejarah & Profil
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Atur sejarah, logo, dan filosofi organisasi.</p>
+        </Link>
+
+        <Link to="/admin/philosophy" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <Lightbulb /> Kelola Filosofi Logo
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur makna dan filosofi di balik logo organisasi.</p>
         </Link>
 
         <Link to="/admin/hero" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">

@@ -5,7 +5,6 @@ import { BookOpen, Save, Plus, Trash2, Upload } from 'lucide-react';
 
 const ManageHistory = () => {
   const [history, setHistory] = useState('');
-  const [philosophy, setPhilosophy] = useState([{ title: '', desc: '' }]);
   const [logoUrl, setLogoUrl] = useState('');
   const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +17,6 @@ const ManageHistory = () => {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setHistory(data.history || '');
-        setPhilosophy(data.philosophy || [{ title: '', desc: '' }]);
         setLogoUrl(data.logoUrl || '');
       }
     };
@@ -26,16 +24,6 @@ const ManageHistory = () => {
   }, []);
 
   const handleAddPhilosophy = () => setPhilosophy([...philosophy, { title: '', desc: '' }]);
-  const handleRemovePhilosophy = (index) => {
-    const newPhil = philosophy.filter((_, i) => i !== index);
-    setPhilosophy(newPhil.length ? newPhil : [{ title: '', desc: '' }]);
-  };
-  const handlePhilChange = (index, field, value) => {
-    const newPhil = [...philosophy];
-    newPhil[index][field] = value;
-    setPhilosophy(newPhil);
-  };
-
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -65,7 +53,6 @@ const ManageHistory = () => {
     try {
       await updateDoc(doc(db, 'settings', 'about'), {
         history,
-        philosophy: philosophy.filter(p => p.title.trim() !== '' || p.desc.trim() !== ''),
         logoUrl,
         updatedAt: new Date()
       });
