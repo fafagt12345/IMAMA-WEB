@@ -1,3 +1,25 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Users, LayoutGrid, Image as ImageIcon } from 'lucide-react';
+import { useFetch } from './hooks/useFetch';
+
+const AdminDashboard = () => {
+  const { data: members = [] } = useFetch('members');
+  const { data: departments = [] } = useFetch('departments');
+  const { data: slides = [] } = useFetch('hero_slides');
+
+  const stats = [
+    { label: 'Total Pengurus', count: members.length, icon: <Users /> },
+    { label: 'Departemen', count: departments.length, icon: <LayoutGrid /> },
+    { label: 'Hero Slides', count: slides.length, icon: <ImageIcon /> },
+  ];
+
+  return (
+    <div className="p-8 bg-gray-50 min-h-screen pt-24">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {stats.map((stat, i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
               {React.cloneElement(stat.icon, { size: 24 })}
             </div>
             <div>
@@ -18,7 +40,8 @@
           <p className="text-gray-500 text-xs mt-2 italic">Atur departemen dan data anggota aktif.</p>
         </Link>
 
-...
+        <Link to="/admin/departments" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
             <LayoutGrid /> Kelola Departemen
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Atur nama-nama departemen organisasi.</p>
@@ -36,6 +59,13 @@
             <ImageIcon /> Kelola Hero Banner
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Atur gambar dan teks promosi di halaman depan.</p>
+        </Link>
+
+        <Link to="/admin/gallery" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <ImageIcon /> Kelola Galeri
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Unggah dokumentasi kegiatan IMAMA.</p>
         </Link>
       </div>
     </div>
