@@ -29,7 +29,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-[70dvh] sm:h-[100dvh] w-full overflow-hidden bg-emerald-950">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-emerald-950">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -40,14 +40,25 @@ const HeroCarousel = () => {
           transition={{ duration: 1 }}
           className="absolute inset-0"
         >
-          {/* Image with Blur Effect */}
-          <div 
-            className="absolute inset-0 bg-contain sm:bg-cover bg-center bg-no-repeat transition-opacity duration-700"
-            style={{ 
-              backgroundImage: `url(${slides[currentIndex].url})`, // Menggunakan URL gambar dari Firestore
-              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.5)` // Blur level dinamis, default 0 jika tidak ada
+          {/* Layer 1: Background Blur (Mengisi ruang kosong agar tidak ada bar hitam/hijau) */}
+          <div
+            className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40"
+            style={{
+              backgroundImage: `url(${slides[currentIndex].url})`,
             }}
           />
+
+          {/* Layer 2: Main Image (Menampilkan seluruh foto tanpa terpotong) */}
+          <div 
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700"
+            style={{ 
+              backgroundImage: `url(${slides[currentIndex].url})`, 
+              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.6)` 
+            }}
+          />
+
+          {/* Layer 3: Dark Gradient Overlay (Memastikan teks selalu terbaca di semua perangkat) */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
         </motion.div>
       </AnimatePresence>
 
