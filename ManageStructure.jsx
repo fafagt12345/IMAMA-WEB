@@ -1,15 +1,7 @@
 import React, { useState } from 'react';
-import { db, storage } from './config';
+import { db } from './config';
 import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
-import { ref, deleteObject } from 'firebase/storage';
 import { useFetch } from './hooks/useFetch';
-
-const getStoragePathFromUrl = (url) => {
-  if (!url) return '';
-  const decodedUrl = decodeURIComponent(url);
-  const parts = decodedUrl.split('/o/')[1]?.split('?')[0];
-  return parts || '';
-};
 
 const ManageStructure = () => {
   const { data: members = [] } = useFetch('members');
@@ -37,11 +29,6 @@ const ManageStructure = () => {
       let photoUrl = currentMemberPhotoUrl;
 
       if (memberPhoto) {
-        if (currentMemberPhotoUrl && currentMemberPhotoUrl.includes('firebasestorage.googleapis.com')) {
-          const oldPhotoRef = ref(storage, getStoragePathFromUrl(currentMemberPhotoUrl));
-          try { await deleteObject(oldPhotoRef); } catch (e) {}
-        }
-
         const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
         const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
@@ -131,9 +118,6 @@ const ManageStructure = () => {
                   <button onClick={async () => {
                     if(confirm("Hapus?")) {
                       await deleteDoc(doc(db, 'members', m.id));
-                      if(m.profilePhotoUrl && m.profilePhotoUrl.includes('firebasestorage.googleapis.com')) {
-                        try { await deleteObject(ref(storage, getStoragePathFromUrl(m.profilePhotoUrl))); } catch(e){}
-                      }
                     }
                   }} className="text-red-600 text-xs font-bold">Hapus</button>
                 </div>
