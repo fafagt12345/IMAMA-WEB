@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { LayoutGrid, Save } from 'lucide-react';
 
 const ManageAbout = () => {
@@ -42,11 +42,11 @@ const ManageAbout = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      await updateDoc(doc(db, 'settings', 'about'), {
+      await setDoc(doc(db, 'settings', 'about'), {
         vision,
         mission: mission.filter(m => m.trim() !== ''),
         updatedAt: new Date()
-      });
+      }, { merge: true });
       setMessage({ type: 'success', text: 'Visi & Misi berhasil diperbarui!' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal menyimpan: ' + err.message });

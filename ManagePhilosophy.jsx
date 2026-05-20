@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { Lightbulb, Save, Plus, Trash2 } from 'lucide-react';
 
 const ManagePhilosophy = () => {
@@ -37,10 +37,10 @@ const ManagePhilosophy = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      await updateDoc(doc(db, 'settings', 'about'), {
+      await setDoc(doc(db, 'settings', 'about'), {
         philosophy: philosophy.filter(p => p.title.trim() !== '' || p.desc.trim() !== ''),
         updatedAt: new Date()
-      });
+      }, { merge: true });
       setMessage({ type: 'success', text: 'Filosofi Logo berhasil diperbarui!' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal menyimpan: ' + err.message });
