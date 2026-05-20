@@ -58,7 +58,7 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
             <BookOpen /> Kelola Sejarah & Profil
           </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur sejarah, logo, dan filosofi organisasi.</p>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur sejarah dan logo organisasi.</p>
         </Link>
 
         <Link to="/admin/philosophy" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">

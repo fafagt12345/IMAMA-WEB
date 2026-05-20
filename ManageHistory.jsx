@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { BookOpen, Save, Plus, Trash2, Upload } from 'lucide-react';
+import { BookOpen, Save, Upload } from 'lucide-react';
 
 const ManageHistory = () => {
   const [history, setHistory] = useState('');
@@ -23,7 +23,6 @@ const ManageHistory = () => {
     fetchData();
   }, []);
 
-  const handleAddPhilosophy = () => setPhilosophy([...philosophy, { title: '', desc: '' }]);
   const handleLogoUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
