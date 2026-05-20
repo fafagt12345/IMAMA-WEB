@@ -13,7 +13,8 @@ import ManageGallery from './ManageGallery';
 import Programs from './Programs';
 import ManagePrograms from './ManagePrograms';
 import ManageAbout from './ManageAbout';
-import ManageHero from './ManageHero';
+import ManageHero from './ManageHero'; // Pastikan nama file di folder juga ManageHero.jsx
+import ManageHistory from './ManageHistory'; // Tambahkan baris ini
 import Contact from './Contact';
 import About from './About'; // Pastikan About diimport
 import ManageContact from './ManageContact';

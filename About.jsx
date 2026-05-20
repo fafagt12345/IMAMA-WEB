@@ -12,12 +12,7 @@ const About = () => {
     const unsubscribe = onSnapshot(doc(db, 'settings', 'about'), (docSnap) => {
       if (docSnap.exists()) {
         setAboutData(docSnap.data());
-      } else {
-        setAboutData(null); // Data tidak ditemukan
       }
-      setLoading(false);
-    }, (error) => {
-      console.error("Error fetching about data:", error);
       setLoading(false);
     });
     return () => unsubscribe();
@@ -67,8 +62,7 @@ const About = () => {
     <section id="about" className="py-20 bg-white pt-24">
       <div className="container mx-auto px-6">
         <h1 className="text-4xl font-bold text-center text-emerald-900 mb-12">Tentang IMAMA UNESA</h1>
-
-        {/* Visi & Misi Section */}
+        
         <motion.div 
           className="grid md:grid-cols-2 gap-12 mb-20"
           variants={containerVariants}
@@ -76,7 +70,6 @@ const About = () => {
           whileInView="visible"
           viewport={{ once: true }}
         >
-          {/* Visi */}
           <div className="p-10 bg-emerald-900 rounded-[3rem] shadow-xl text-white">
             <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 italic">
               <Target /> Visi
@@ -84,20 +77,14 @@ const About = () => {
             <p className="text-lg leading-relaxed font-light">{vision}</p>
           </div>
 
-          {/* Misi */}
-          <motion.div
-            variants={containerVariants}
-            className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg"
-          >
+          <motion.div variants={containerVariants} className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg">
             <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
               <Flag /> Misi
             </h2>
             <ul className="space-y-4">
               {mission.map((misi, idx) => (
                 <motion.li key={idx} variants={itemVariants} className="flex gap-4 text-gray-700">
-                  <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">
-                    {idx + 1}
-                  </div>
+                  <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">{idx + 1}</div>
                   <span>{misi}</span>
                 </motion.li>
               ))}
@@ -105,7 +92,6 @@ const About = () => {
           </motion.div>
         </motion.div>
 
-        {/* Sejarah & Logo Section */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
             <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
@@ -114,11 +100,10 @@ const About = () => {
             <p className="text-gray-700 leading-relaxed">{history}</p>
           </motion.div>
           <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="flex justify-center">
-            <img src={logoUrl} alt="Logo IMAMA UNESA" className="max-w-xs h-auto rounded-full shadow-lg border-4 border-emerald-100" />
+            <img src={logoUrl} alt="Logo" className="max-w-xs h-auto rounded-full shadow-lg border-4 border-emerald-100" />
           </motion.div>
         </div>
 
-        {/* Filosofi Logo Section */}
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg">
           <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
             <Lightbulb /> Filosofi Logo
@@ -126,9 +111,7 @@ const About = () => {
           <ul className="space-y-4">
             {philosophy.map((item, idx) => (
               <motion.li key={idx} variants={itemVariants} className="flex gap-4 text-gray-700">
-                <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">
-                  {idx + 1}
-                </div>
+                <div className="min-w-[24px] h-6 w-6 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center font-bold text-xs">{idx + 1}</div>
                 <div>
                   <h4 className="font-bold">{item.title}</h4>
                   <p className="text-sm">{item.desc}</p>
@@ -143,3 +126,4 @@ const About = () => {
 };
 
 export default About;
+
