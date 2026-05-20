@@ -8,6 +8,7 @@ const ManageHero = () => {
   const { data: slides = [] } = useFetch('hero_slides');
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
+  const [blurLevel, setBlurLevel] = useState(4); // Default blur 4px
   const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -29,11 +30,12 @@ const ManageHero = () => {
       await addDoc(collection(db, 'hero_slides'), {
         title,
         subtitle,
+        blurLevel,
         url: uploadData.secure_url,
         createdAt: serverTimestamp()
       });
 
-      setTitle(''); setSubtitle(''); setPhoto(null);
+      setTitle(''); setSubtitle(''); setBlurLevel(4); setPhoto(null);
       e.target.reset();
     } catch (err) {
       alert("Gagal: " + err.message);
@@ -51,6 +53,13 @@ const ManageHero = () => {
           <div className="grid md:grid-cols-2 gap-4">
             <input type="text" placeholder="Judul Slide" value={title} onChange={(e) => setTitle(e.target.value)} className="p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required />
             <input type="text" placeholder="Sub-judul" value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className="p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required />
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <input type="number" placeholder="Tingkat Blur (0-10)" value={blurLevel} onChange={(e) => setBlurLevel(Math.max(0, Math.min(10, Number(e.target.value))))} className="p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" min="0" max="10" />
+            {/* Preview Blur (opsional, bisa ditambahkan jika ingin ada preview langsung) */}
+            <div className="flex items-center text-gray-600 text-sm">
+              *Atur 0 untuk tanpa blur.
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <input type="file" onChange={(e) => setPhoto(e.target.files[0])} className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" required />

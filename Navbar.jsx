@@ -7,7 +7,7 @@ import { Menu, X, User, LogOut } from 'lucide-react';
 
 const NAV_LINKS = [
   { name: 'Beranda', path: '/' },
-  { name: 'Tentang', path: '/#about' },
+  { name: 'Tentang', path: '/tentang' },
   { name: 'Struktur', path: '/struktur' },
   { name: 'Program', path: '/program-kerja' },
   { name: 'Galeri', path: '/galeri' },

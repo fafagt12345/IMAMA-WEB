@@ -64,6 +64,11 @@ function App() {
               <ManageAbout />
             </ProtectedRoute>
           } />
+          <Route path="/admin/history" element={
+            <ProtectedRoute>
+              <ManageHistory />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/programs" element={
             <ProtectedRoute>
               <ManagePrograms />

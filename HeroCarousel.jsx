@@ -44,8 +44,8 @@ const HeroCarousel = () => {
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 scale-110"
             style={{ 
-              backgroundImage: `url(${slides[currentIndex].url})`,
-              filter: 'blur(4px) brightness(0.5)' // Foto agak blur dan sedikit gelap agar teks menonjol
+              backgroundImage: `url(${slides[currentIndex].url})`, // Menggunakan URL gambar dari Firestore
+              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.5)` // Blur level dinamis, default 0 jika tidak ada
             }}
           />
         </motion.div>

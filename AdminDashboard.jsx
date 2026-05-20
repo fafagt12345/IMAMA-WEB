@@ -1,33 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, Target } from 'lucide-react';
+import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, BookOpen } from 'lucide-react';
 import { useFetch } from './hooks/useFetch';
-import { db } from './config';
-import { doc, getDoc } from 'firebase/firestore';
 
 const AdminDashboard = () => {
   const { data: members = [] } = useFetch('members');
   const { data: departments = [] } = useFetch('departments');
   const { data: slides = [] } = useFetch('hero_slides');
-  const { data: gallery = [] } = useFetch('gallery');
-  const { data: programs = [] } = useFetch('programs');
-  const [missionCount, setMissionCount] = React.useState(0);
-
-  React.useEffect(() => {
-    const fetchAbout = async () => {
-      const docSnap = await getDoc(doc(db, 'settings', 'about'));
-      if (docSnap.exists()) setMissionCount(docSnap.data().mission?.length || 0);
-    };
-    fetchAbout();
-  }, []);
 
   const stats = [
     { label: 'Total Pengurus', count: members.length, icon: <Users /> },
     { label: 'Departemen', count: departments.length, icon: <LayoutGrid /> },
     { label: 'Hero Slides', count: slides.length, icon: <ImageIcon /> },
-    { label: 'Foto Galeri', count: gallery.length, icon: <ImageIcon /> },
-    { label: 'Program Kerja', count: programs.length, icon: <Briefcase /> },
-    { label: 'Poin Misi', count: missionCount, icon: <Target /> },
   ];
 
   return (
@@ -68,6 +52,13 @@ const AdminDashboard = () => {
             <LayoutGrid /> Kelola Visi & Misi
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Ubah konten visi dan misi pada halaman Tentang Kami.</p>
+        </Link>
+
+        <Link to="/admin/history" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <BookOpen /> Kelola Sejarah & Profil
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur sejarah, logo, dan filosofi organisasi.</p>
         </Link>
 
         <Link to="/admin/hero" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
