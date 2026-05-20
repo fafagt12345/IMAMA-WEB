@@ -28,36 +28,6 @@ const About = () => {
     visible: { opacity: 1, x: 0 }
   };
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Flag, Target, BookOpen, Lightbulb } from 'lucide-react';
-import { db } from './config';
-import { doc, onSnapshot } from 'firebase/firestore';
-
-const About = () => {
-  const [aboutData, setAboutData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, 'settings', 'about'), (docSnap) => {
-      if (docSnap.exists()) {
-        setAboutData(docSnap.data());
-      }
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } }
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, x: -20 },
-    visible: { opacity: 1, x: 0 }
-  };
-
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50 pt-20">
@@ -154,3 +124,5 @@ const About = () => {
     </section>
   );
 };
+
+export default About;
