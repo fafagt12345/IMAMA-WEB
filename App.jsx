@@ -13,6 +13,7 @@ import ManageGallery from './ManageGallery';
 import Programs from './Programs';
 import ManagePrograms from './ManagePrograms';
 import ManageAbout from './ManageAbout';
+import ManageHero from './ManageHero';
 import Contact from './Contact';
 import ManageContact from './ManageContact';
 import Footer from './Footer';
@@ -49,6 +50,11 @@ function App() {
           <Route path="/admin/gallery" element={
             <ProtectedRoute>
               <ManageGallery />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/hero" element={
+            <ProtectedRoute>
+              <ManageHero />
             </ProtectedRoute>
           } />
           <Route path="/admin/about" element={

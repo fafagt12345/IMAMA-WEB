@@ -1,45 +1,32 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
-const slides = [
-  {
-    id: 1,
-    url: 'https://images.unsplash.com/photo-1523050335392-93851179ae22?auto=format&fit=crop&q=80&w=1920',
-    title: 'Membangun Solidaritas Mahasiswa Magetan',
-    subtitle: 'Ikatan Mahasiswa Magetan Universitas Negeri Surabaya'
-  },
-  {
-    id: 2,
-    url: 'https://images.unsplash.com/photo-1541339907198-e08759dfc3ef?auto=format&fit=crop&q=80&w=1920',
-    title: 'Dedikasi Untuk Almamater & Daerah',
-    subtitle: 'Berperan Aktif dalam Pembangunan Karakter Mahasiswa Rantau'
-  },
-  {
-    id: 3,
-    url: 'https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&q=80&w=1920',
-    title: 'Keluarga Mahasiswa Magetan di Surabaya',
-    subtitle: 'Rumah Kedua untuk Seluruh Mahasiswa Asal Magetan di UNESA'
-  }
-];
+import { useFetch } from './hooks/useFetch';
 
 const HeroCarousel = () => {
+  const { data: slides = [], loading } = useFetch('hero_slides');
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = useCallback(() => {
+    if (slides.length === 0) return;
     setCurrentIndex((prevIndex) => (prevIndex === slides.length - 1 ? 0 : prevIndex + 1));
-  }, []);
+  }, [slides.length]);
 
   const prevSlide = () => {
+    if (slides.length === 0) return;
     setCurrentIndex((prevIndex) => (prevIndex === 0 ? slides.length - 1 : prevIndex - 1));
   };
 
   useEffect(() => {
+    if (slides.length === 0) return;
     const interval = setInterval(() => {
       nextSlide();
     }, 5000); // Bergulir otomatis setiap 5 detik
     return () => clearInterval(interval);
-  }, [nextSlide]);
+  }, [nextSlide, slides.length]);
+
+  if (loading) return <div className="h-screen bg-emerald-950 flex items-center justify-center text-white">Memuat...</div>;
+  if (slides.length === 0) return null;
 
   return (
     <div className="relative h-screen w-full overflow-hidden bg-emerald-950">

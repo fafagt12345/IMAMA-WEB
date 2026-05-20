@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { LayoutGrid, Save } from 'lucide-react';
+import { LayoutGrid, Save, Plus, Trash2, Image as ImageIcon, Upload } from 'lucide-react';
 
 const ManageAbout = () => {
   const [vision, setVision] = useState('');
   const [mission, setMission] = useState(['']);
+  const [history, setHistory] = useState('');
+  const [philosophy, setPhilosophy] = useState([{ title: '', desc: '' }]);
+  const [logoUrl, setLogoUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
@@ -17,6 +21,9 @@ const ManageAbout = () => {
         const data = docSnap.data();
         setVision(data.vision || '');
         setMission(data.mission || ['']);
+        setHistory(data.history || '');
+        setPhilosophy(data.philosophy || [{ title: '', desc: '' }]);
+        setLogoUrl(data.logoUrl || '');
       }
     };
     fetchData();
@@ -33,6 +40,36 @@ const ManageAbout = () => {
     setMission(newMission);
   };
 
+  const handleAddPhilosophy = () => setPhilosophy([...philosophy, { title: '', desc: '' }]);
+  const handleRemovePhilosophy = (index) => {
+    const newPhil = philosophy.filter((_, i) => i !== index);
+    setPhilosophy(newPhil.length ? newPhil : [{ title: '', desc: '' }]);
+  };
+  const handlePhilChange = (index, field, value) => {
+    const newPhil = [...philosophy];
+    newPhil[index][field] = value;
+    setPhilosophy(newPhil);
+  };
+
+  const handleLogoUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+    try {
+      const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      setLogoUrl(data.secure_url);
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Gagal upload: ' + err.message });
+    } finally { setUploading(false); }
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -42,6 +79,9 @@ const ManageAbout = () => {
       await setDoc(doc(db, 'settings', 'about'), {
         vision,
         mission: mission.filter(m => m.trim() !== ''),
+        history,
+        philosophy: philosophy.filter(p => p.title.trim() !== ''),
+        logoUrl,
         updatedAt: new Date()
       });
       setMessage({ type: 'success', text: 'Visi & Misi berhasil diperbarui!' });

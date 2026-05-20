@@ -30,6 +30,13 @@
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Ubah konten visi dan misi pada halaman Tentang Kami.</p>
         </Link>
+
+        <Link to="/admin/hero" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <ImageIcon /> Kelola Hero Banner
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur gambar dan teks promosi di halaman depan.</p>
+        </Link>
       </div>
     </div>
   );
