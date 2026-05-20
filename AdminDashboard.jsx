@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, LayoutGrid, Image as ImageIcon } from 'lucide-react';
+import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone } from 'lucide-react';
 import { useFetch } from './hooks/useFetch';
 
 const AdminDashboard = () => {
@@ -66,6 +66,22 @@ const AdminDashboard = () => {
             <ImageIcon /> Kelola Galeri
           </div>
           <p className="text-gray-500 text-xs mt-2 italic">Unggah dokumentasi kegiatan IMAMA.</p>
+        </Link>
+      </div>
+
+      <h3 className="text-xl font-bold mb-6 text-emerald-800 uppercase tracking-wider mt-12">Manajemen Lainnya</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Link to="/admin/programs" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <Briefcase /> Kelola Program Kerja
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Atur daftar program kerja organisasi.</p>
+        </Link>
+        <Link to="/admin/contact" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
+          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
+            <Phone /> Kelola Kontak
+          </div>
+          <p className="text-gray-500 text-xs mt-2 italic">Ubah informasi kontak organisasi.</p>
         </Link>
       </div>
     </div>

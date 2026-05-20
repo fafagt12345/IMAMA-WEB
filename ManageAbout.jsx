@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 import { LayoutGrid, Save, Plus, Trash2, Image as ImageIcon, Upload } from 'lucide-react';
 
 const ManageAbout = () => {
@@ -13,16 +13,17 @@ const ManageAbout = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
+  // Fetch data on component mount
   useEffect(() => {
     const fetchData = async () => {
       const docRef = doc(db, 'settings', 'about');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         const data = docSnap.data();
-        setVision(data.vision || '');
-        setMission(data.mission || ['']);
+        setVision(data.vision || ''); // Default to empty string if not found
+        setMission(data.mission || ['']); // Default to array with empty string if not found
         setHistory(data.history || '');
-        setPhilosophy(data.philosophy || [{ title: '', desc: '' }]);
+        setPhilosophy(data.philosophy || [{ title: '', desc: '' }]); // Default to array with empty object
         setLogoUrl(data.logoUrl || '');
       }
     };
@@ -30,10 +31,12 @@ const ManageAbout = () => {
   }, []);
 
   const handleAddMission = () => setMission([...mission, '']);
+
   const handleRemoveMission = (index) => {
     const newMission = mission.filter((_, i) => i !== index);
     setMission(newMission.length ? newMission : ['']);
   };
+
   const handleMissionChange = (index, value) => {
     const newMission = [...mission];
     newMission[index] = value;
@@ -41,10 +44,12 @@ const ManageAbout = () => {
   };
 
   const handleAddPhilosophy = () => setPhilosophy([...philosophy, { title: '', desc: '' }]);
+
   const handleRemovePhilosophy = (index) => {
     const newPhil = philosophy.filter((_, i) => i !== index);
     setPhilosophy(newPhil.length ? newPhil : [{ title: '', desc: '' }]);
   };
+
   const handlePhilChange = (index, field, value) => {
     const newPhil = [...philosophy];
     newPhil[index][field] = value;
@@ -56,8 +61,10 @@ const ManageAbout = () => {
     if (!file) return;
     setUploading(true);
     const formData = new FormData();
+
     formData.append('file', file);
     formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET);
+
     try {
       const res = await fetch(`https://api.cloudinary.com/v1_1/${import.meta.env.VITE_CLOUDINARY_CLOUD_NAME}/image/upload`, {
         method: 'POST',
@@ -65,9 +72,10 @@ const ManageAbout = () => {
       });
       const data = await res.json();
       setLogoUrl(data.secure_url);
+      setMessage({ type: 'success', text: 'Logo berhasil diunggah!' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Gagal upload: ' + err.message });
-    } finally { setUploading(false); }
+    } finally { setUploading(false); e.target.value = null; } // Clear file input
   };
 
   const handleSave = async (e) => {
@@ -141,6 +149,73 @@ const ManageAbout = () => {
             </div>
             <button type="button" onClick={handleAddMission} className="mt-4 text-emerald-600 font-semibold text-sm hover:underline">
               + Tambah Poin Misi
+            </button>
+          </div>
+
+          {/* Sejarah Organisasi */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Sejarah Organisasi</label>
+            <textarea
+              value={history}
+              onChange={(e) => setHistory(e.target.value)}
+              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all h-48"
+              placeholder="Masukkan sejarah singkat IMAMA UNESA..."
+              required
+            />
+          </div>
+
+          {/* Logo Organisasi */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">Logo Organisasi</label>
+            <div className="flex items-center gap-4 mb-4">
+              {logoUrl && (
+                <img src={logoUrl} alt="Logo Preview" className="w-24 h-24 object-contain rounded-xl border border-gray-100 p-2" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                disabled={uploading}
+              />
+              {uploading && <span className="text-emerald-600 text-sm">Mengunggah...</span>}
+            </div>
+            {logoUrl && (
+              <p className="text-gray-500 text-xs">URL Logo: <a href={logoUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{logoUrl}</a></p>
+            )}
+          </div>
+
+          {/* Filosofi Logo */}
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+            <label className="block text-sm font-bold text-gray-700 mb-4 uppercase tracking-wider">Filosofi Logo</label>
+            <div className="space-y-4">
+              {philosophy.map((p, index) => (
+                <div key={index} className="flex flex-col gap-2 p-4 border border-gray-100 rounded-xl bg-gray-50">
+                  <input
+                    type="text"
+                    value={p.title}
+                    onChange={(e) => handlePhilChange(index, 'title', e.target.value)}
+                    className="w-full p-3 bg-white border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
+                    placeholder={`Judul Filosofi ke-${index + 1}`}
+                    required
+                  />
+                  <textarea
+                    value={p.desc}
+                    onChange={(e) => handlePhilChange(index, 'desc', e.target.value)}
+                    className="w-full p-3 bg-white border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all h-24"
+                    placeholder={`Deskripsi Filosofi ke-${index + 1}`}
+                    required
+                  />
+                  <div className="flex justify-end">
+                    <button type="button" onClick={() => handleRemovePhilosophy(index)} className="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors flex items-center gap-1 text-sm">
+                      <Trash2 size={16} /> Hapus Poin
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <button type="button" onClick={handleAddPhilosophy} className="mt-4 text-emerald-600 font-semibold text-sm hover:underline flex items-center gap-1">
+              <Plus size={16} /> Tambah Poin Filosofi
             </button>
           </div>
 

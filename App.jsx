@@ -15,6 +15,7 @@ import ManagePrograms from './ManagePrograms';
 import ManageAbout from './ManageAbout';
 import ManageHero from './ManageHero';
 import Contact from './Contact';
+import About from './About'; // Pastikan About diimport
 import ManageContact from './ManageContact';
 import Footer from './Footer';
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/galeri" element={<Gallery />} />
           <Route path="/program-kerja" element={<Programs />} />
+          <Route path="/tentang" element={<About />} /> {/* Tambahkan route untuk halaman Tentang */}
           <Route path="/struktur" element={<Structure />} />
           <Route path="/kontak" element={<Contact />} />
           
