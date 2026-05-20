@@ -29,7 +29,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-emerald-950">
+    <div className="relative h-[70dvh] sm:h-[100dvh] w-full overflow-hidden bg-emerald-950">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -42,7 +42,7 @@ const HeroCarousel = () => {
         >
           {/* Image with Blur Effect */}
           <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
+            className="absolute inset-0 bg-contain sm:bg-cover bg-center bg-no-repeat transition-opacity duration-700"
             style={{ 
               backgroundImage: `url(${slides[currentIndex].url})`, // Menggunakan URL gambar dari Firestore
               filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.5)` // Blur level dinamis, default 0 jika tidak ada
@@ -52,7 +52,7 @@ const HeroCarousel = () => {
       </AnimatePresence>
 
       {/* Content Overlay */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 py-20">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 py-10 sm:py-20">
         <motion.div
           key={`content-${currentIndex}`}
           initial={{ y: 20, opacity: 0 }}
@@ -62,7 +62,7 @@ const HeroCarousel = () => {
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl leading-tight">
             {slides[currentIndex].title}
           </h1>
-          <p className="text-base sm:text-lg md:text-2xl text-emerald-50 mb-8 max-w-3xl mx-auto font-light italic leading-relaxed">
+          <p className="text-sm sm:text-lg md:text-2xl text-emerald-50 mb-6 sm:mb-8 max-w-3xl mx-auto font-light italic leading-relaxed">
             {slides[currentIndex].subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
