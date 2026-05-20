@@ -77,7 +77,7 @@ const ManageAbout = () => {
             <textarea
               value={vision}
               onChange={(e) => setVision(e.target.value)}
-              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all h-32"
+              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all h-48"
               placeholder="Masukkan visi IMAMA UNESA..."
               required
             />

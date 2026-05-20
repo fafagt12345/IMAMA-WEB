@@ -7,11 +7,13 @@ const AdminDashboard = () => {
   const { data: members = [] } = useFetch('members');
   const { data: departments = [] } = useFetch('departments');
   const { data: slides = [] } = useFetch('hero_slides');
+  const { data: gallery = [] } = useFetch('gallery');
 
   const stats = [
     { label: 'Total Pengurus', count: members.length, icon: <Users /> },
     { label: 'Departemen', count: departments.length, icon: <LayoutGrid /> },
     { label: 'Hero Slides', count: slides.length, icon: <ImageIcon /> },
+    { label: 'Galeri', count: gallery.length, icon: <ImageIcon /> },
   ];
 
   return (

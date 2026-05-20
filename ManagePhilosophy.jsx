@@ -82,7 +82,7 @@ const ManagePhilosophy = () => {
                   <textarea
                     value={p.desc}
                     onChange={(e) => handlePhilChange(index, 'desc', e.target.value)}
-                    className="w-full p-3 border rounded-xl h-24 outline-none focus:ring-2 focus:ring-emerald-500"
+                    className="w-full p-3 border rounded-xl h-40 outline-none focus:ring-2 focus:ring-emerald-500"
                     placeholder="Deskripsi Filosofi (Contoh: Melambangkan persatuan dan kesatuan...)"
                     required
                   />

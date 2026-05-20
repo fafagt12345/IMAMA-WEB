@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { db } from './config';
-import { collection, addDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, deleteDoc, doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { useFetch } from './hooks/useFetch';
-import { Image as ImageIcon, Trash2, Upload } from 'lucide-react';
+import { Image as ImageIcon, Trash2, Upload, Eye, EyeOff } from 'lucide-react';
 
 const ManageGallery = () => {
   const { data: images = [], loading: fetchLoading } = useFetch('gallery');
   const [caption, setCaption] = useState('');
   const [photo, setPhoto] = useState(null);
+  const [isVisible, setIsVisible] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const handleUpload = async (e) => {
@@ -32,11 +33,13 @@ const ManageGallery = () => {
       await addDoc(collection(db, 'gallery'), {
         caption,
         url: uploadData.secure_url,
+        isVisible: isVisible,
         createdAt: serverTimestamp()
       });
 
       setCaption('');
       setPhoto(null);
+      setIsVisible(true);
       e.target.reset();
     } catch (err) {
       alert("Gagal mengunggah: " + err.message);
@@ -51,6 +54,10 @@ const ManageGallery = () => {
     }
   };
 
+  const toggleVisibility = async (id, currentStatus) => {
+    await updateDoc(doc(db, 'gallery', id), { isVisible: !currentStatus });
+  };
+
   return (
     <div className="p-8 bg-gray-50 min-h-screen pt-24">
       <div className="max-w-5xl mx-auto">
@@ -59,9 +66,19 @@ const ManageGallery = () => {
         </h1>
 
         <form onSubmit={handleUpload} className="bg-white p-6 rounded-2xl shadow-sm mb-8 space-y-4 border border-gray-100">
-          <input type="text" placeholder="Keterangan Foto / Caption" value={caption} onChange={(e) => setCaption(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required />
+          <textarea 
+            placeholder="Keterangan Foto / Caption" 
+            value={caption} 
+            onChange={(e) => setCaption(e.target.value)} 
+            className="w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 h-32" 
+            required 
+          />
           <div className="flex items-center gap-4">
             <input type="file" onChange={(e) => setPhoto(e.target.files[0])} className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" required />
+            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input type="checkbox" checked={isVisible} onChange={(e) => setIsVisible(e.target.checked)} />
+              Tampilkan di Galeri
+            </label>
             <button type="submit" disabled={loading} className="bg-emerald-700 text-white px-6 py-2 rounded-xl font-bold flex items-center gap-2 hover:bg-emerald-800 disabled:opacity-50">
               <Upload size={18} /> {loading ? 'Mengunggah...' : 'Upload Foto'}
             </button>
@@ -73,10 +90,15 @@ const ManageGallery = () => {
             <div key={img.id} className="relative group overflow-hidden rounded-2xl shadow-md bg-white border border-gray-100 aspect-square">
               <img src={img.url} alt={img.caption} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 text-center">
-                <p className="text-white text-xs mb-3 line-clamp-2">{img.caption}</p>
-                <button onClick={() => handleDelete(img.id)} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
-                  <Trash2 size={16} />
-                </button>
+                <p className="text-white text-xs mb-3 line-clamp-3">{img.caption}</p>
+                <div className="flex gap-2">
+                  <button onClick={() => toggleVisibility(img.id, img.isVisible !== false)} className={`${img.isVisible !== false ? 'bg-emerald-500' : 'bg-gray-500'} text-white p-2 rounded-full transition-colors`}>
+                    {img.isVisible !== false ? <Eye size={16} /> : <EyeOff size={16} />}
+                  </button>
+                  <button onClick={() => handleDelete(img.id)} className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

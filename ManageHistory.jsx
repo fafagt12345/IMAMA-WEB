@@ -83,7 +83,7 @@ const ManageHistory = () => {
             <textarea
               value={history}
               onChange={(e) => setHistory(e.target.value)}
-              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl h-48 outline-none focus:ring-2 focus:ring-emerald-500"
+              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl h-64 outline-none focus:ring-2 focus:ring-emerald-500"
               placeholder="Masukkan sejarah singkat..."
               required
             />
