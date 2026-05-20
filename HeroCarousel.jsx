@@ -29,7 +29,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-emerald-950">
+    <div className="relative h-screen h-[100dvh] w-full overflow-hidden bg-emerald-950">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -52,24 +52,24 @@ const HeroCarousel = () => {
       </AnimatePresence>
 
       {/* Content Overlay */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 py-20">
         <motion.div
           key={`content-${currentIndex}`}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
-          <h1 className="text-4xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl">
+          <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl leading-tight">
             {slides[currentIndex].title}
           </h1>
-          <p className="text-lg md:text-2xl text-emerald-50 mb-8 max-w-3xl mx-auto font-light italic">
+          <p className="text-base sm:text-lg md:text-2xl text-emerald-50 mb-8 max-w-3xl mx-auto font-light italic leading-relaxed">
             {slides[currentIndex].subtitle}
           </p>
-          <div className="flex gap-4 justify-center">
-            <button className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20">
               Gabung IMAMA
             </button>
-            <button className="border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all">
+            <button className="w-full sm:w-auto border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all">
               Lihat Kegiatan
             </button>
           </div>
@@ -79,15 +79,15 @@ const HeroCarousel = () => {
       {/* Navigation Controls */}
       <button 
         onClick={prevSlide}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
       >
-        <ChevronLeft size={32} />
+        <ChevronLeft size={24} className="sm:w-8 sm:h-8" />
       </button>
       <button 
         onClick={nextSlide}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
       >
-        <ChevronRight size={32} />
+        <ChevronRight size={24} className="sm:w-8 sm:h-8" />
       </button>
 
       {/* Dots Indicator */}

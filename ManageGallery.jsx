@@ -8,6 +8,7 @@ const ManageGallery = () => {
   const { data: images = [], loading: fetchLoading } = useFetch('gallery');
   const [caption, setCaption] = useState('');
   const [photo, setPhoto] = useState(null);
+  const [eventDate, setEventDate] = useState(new Date().toISOString().split('T')[0]);
   const [isVisible, setIsVisible] = useState(true);
   const [loading, setLoading] = useState(false);
 
@@ -34,12 +35,14 @@ const ManageGallery = () => {
         caption,
         url: uploadData.secure_url,
         isVisible: isVisible,
+        eventDate: eventDate,
         createdAt: serverTimestamp()
       });
 
       setCaption('');
       setPhoto(null);
       setIsVisible(true);
+      setEventDate(new Date().toISOString().split('T')[0]);
       e.target.reset();
     } catch (err) {
       alert("Gagal mengunggah: " + err.message);
@@ -75,6 +78,16 @@ const ManageGallery = () => {
           />
           <div className="flex items-center gap-4">
             <input type="file" onChange={(e) => setPhoto(e.target.files[0])} className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100" required />
+            <div className="flex flex-col">
+              <span className="text-[10px] text-gray-500 mb-1 ml-1 font-bold uppercase tracking-wider">Tanggal Kegiatan</span>
+              <input 
+                type="date" 
+                value={eventDate} 
+                onChange={(e) => setEventDate(e.target.value)} 
+                className="p-2 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 text-xs text-gray-700" 
+                required 
+              />
+            </div>
             <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
               <input type="checkbox" checked={isVisible} onChange={(e) => setIsVisible(e.target.checked)} />
               Tampilkan di Galeri

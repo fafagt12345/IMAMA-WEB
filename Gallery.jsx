@@ -35,8 +35,11 @@ const Gallery = () => {
                   alt={img.caption} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-                  <p className="text-white text-sm line-clamp-2">{img.caption}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                  <p className="text-white text-sm font-medium line-clamp-2">{img.caption}</p>
+                  {img.eventDate && (
+                    <p className="text-emerald-300 text-[10px] mt-1 font-semibold">{new Date(img.eventDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                  )}
                 </div>
               </motion.div>
             ))}
@@ -87,6 +90,16 @@ const Gallery = () => {
                 >
                   {selectedImg.caption}
                 </motion.p>
+                {selectedImg.eventDate && (
+                  <motion.p 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-emerald-400 text-sm mt-2 font-bold italic tracking-wide"
+                  >
+                    — {new Date(selectedImg.eventDate).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                  </motion.p>
+                )}
               </div>
             </motion.div>
           </motion.div>
