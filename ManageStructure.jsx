@@ -33,7 +33,7 @@ const ManageStructure = () => {
         const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
         if (!CLOUD_NAME || !UPLOAD_PRESET) {
-          throw new Error("Konfigurasi Cloudinary (Cloud Name/Preset) belum diatur di environment variables Railway.");
+          throw new Error("Konfigurasi Cloudinary (Cloud Name/Preset) belum diatur di Environment Variables.");
         }
 
         const formData = new FormData();
