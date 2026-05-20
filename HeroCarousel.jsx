@@ -29,7 +29,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-screen h-[100dvh] w-full overflow-hidden bg-emerald-950">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-emerald-950">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -42,7 +42,7 @@ const HeroCarousel = () => {
         >
           {/* Image with Blur Effect */}
           <div 
-            className="absolute inset-0 bg-cover bg-center transition-transform duration-10000 scale-110"
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-700"
             style={{ 
               backgroundImage: `url(${slides[currentIndex].url})`, // Menggunakan URL gambar dari Firestore
               filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.5)` // Blur level dinamis, default 0 jika tidak ada
