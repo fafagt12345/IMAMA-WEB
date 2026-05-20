@@ -88,7 +88,7 @@ const ManageAbout = () => {
         vision,
         mission: mission.filter(m => m.trim() !== ''),
         history,
-        philosophy: philosophy.filter(p => p.title.trim() !== ''),
+        philosophy: philosophy.filter(p => p.title.trim() !== '' || p.desc.trim() !== ''),
         logoUrl,
         updatedAt: new Date()
       });

@@ -1,17 +1,33 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone } from 'lucide-react';
+import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, Target } from 'lucide-react';
 import { useFetch } from './hooks/useFetch';
+import { db } from './config';
+import { doc, getDoc } from 'firebase/firestore';
 
 const AdminDashboard = () => {
   const { data: members = [] } = useFetch('members');
   const { data: departments = [] } = useFetch('departments');
   const { data: slides = [] } = useFetch('hero_slides');
+  const { data: gallery = [] } = useFetch('gallery');
+  const { data: programs = [] } = useFetch('programs');
+  const [missionCount, setMissionCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchAbout = async () => {
+      const docSnap = await getDoc(doc(db, 'settings', 'about'));
+      if (docSnap.exists()) setMissionCount(docSnap.data().mission?.length || 0);
+    };
+    fetchAbout();
+  }, []);
 
   const stats = [
     { label: 'Total Pengurus', count: members.length, icon: <Users /> },
     { label: 'Departemen', count: departments.length, icon: <LayoutGrid /> },
     { label: 'Hero Slides', count: slides.length, icon: <ImageIcon /> },
+    { label: 'Foto Galeri', count: gallery.length, icon: <ImageIcon /> },
+    { label: 'Program Kerja', count: programs.length, icon: <Briefcase /> },
+    { label: 'Poin Misi', count: missionCount, icon: <Target /> },
   ];
 
   return (
