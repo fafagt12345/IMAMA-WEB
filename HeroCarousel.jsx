@@ -30,7 +30,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-emerald-950">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-black">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -41,25 +41,25 @@ const HeroCarousel = () => {
           transition={{ duration: 1 }}
           className="absolute inset-0"
         >
-          {/* Layer 1: Background Blur (Mengisi ruang kosong agar tidak ada bar hitam/hijau) */}
+          {/* Layer 1: Ambient Background (Mengisi seluruh layar dengan warna dominan foto) */}
           <div
-            className="absolute inset-0 bg-cover bg-center scale-110 blur-2xl opacity-40"
+            className="absolute inset-0 bg-cover bg-center blur-3xl opacity-60 scale-110"
             style={{
               backgroundImage: `url(${slides[currentIndex].url})`,
             }}
           />
 
-          {/* Layer 2: Main Image (Menampilkan seluruh foto tanpa terpotong) */}
+          {/* Layer 2: Main Image (Menampilkan foto asli secara utuh tanpa terpotong) */}
           <div 
-            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700"
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700 z-10"
             style={{ 
               backgroundImage: `url(${slides[currentIndex].url})`, 
-              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.6)` 
+              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.9)` 
             }}
           />
 
-          {/* Layer 3: Dark Gradient Overlay (Memastikan teks selalu terbaca di semua perangkat) */}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/60" />
+          {/* Layer 3: Overlay Gelap (Agar teks lebih mudah dibaca) */}
+          <div className="absolute inset-0 bg-black/40 z-20" />
         </motion.div>
       </AnimatePresence>
 
