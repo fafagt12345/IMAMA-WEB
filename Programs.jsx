@@ -46,7 +46,7 @@ const Programs = () => {
                       {new Date(prog.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
                     </div>
                   )}
-                  <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed">
+                  <p className="text-gray-600 text-sm line-clamp-3 leading-relaxed whitespace-pre-wrap">
                     {prog.description}
                   </p>
                 </div>
