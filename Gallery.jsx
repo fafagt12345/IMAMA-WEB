@@ -86,7 +86,7 @@ const Gallery = () => {
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
-                  className="text-white text-lg md:text-xl font-medium leading-relaxed"
+                  className="text-white text-lg md:text-xl font-medium leading-relaxed whitespace-pre-wrap"
                 >
                   {selectedImg.caption}
                 </motion.p>
