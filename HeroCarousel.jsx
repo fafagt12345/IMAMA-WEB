@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useFetch } from './hooks/useFetch';
 
 const HeroCarousel = () => {
@@ -73,16 +74,16 @@ const HeroCarousel = () => {
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl leading-tight">
             {slides[currentIndex].title}
           </h1>
-          <p className="text-base sm:text-lg md:text-2xl text-emerald-50 mb-8 max-w-3xl mx-auto font-light italic leading-relaxed whitespace-pre-wrap">
+          <p className="text-sm sm:text-lg md:text-2xl text-emerald-50 mb-6 sm:mb-8 max-w-3xl mx-auto font-light italic leading-relaxed whitespace-pre-wrap">
             {slides[currentIndex].subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20">
-              Gabung IMAMA
-            </button>
-            <button className="w-full sm:w-auto border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all">
+            <Link to="/kontak" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20 text-center">
+              Kontak IMAMA
+            </Link>
+            <Link to="/program-kerja" className="w-full sm:w-auto border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all text-center">
               Lihat Kegiatan
-            </button>
+            </Link>
           </div>
         </motion.div>
       </div>
