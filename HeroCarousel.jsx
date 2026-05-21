@@ -30,7 +30,7 @@ const HeroCarousel = () => {
   if (slides.length === 0) return null;
 
   return (
-    <div className="relative h-[100dvh] w-full overflow-hidden bg-black">
+    <div className="relative h-[100dvh] w-full overflow-hidden bg-black select-none">
       {/* Slides Container */}
       <AnimatePresence initial={false}>
         <motion.div
@@ -38,33 +38,33 @@ const HeroCarousel = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 1 }}
-          className="absolute inset-0"
+          transition={{ duration: 0.8 }}
+          className="absolute inset-0 z-0"
         >
-          {/* Layer 1: Ambient Background (Mengisi seluruh layar dengan warna dominan foto) */}
+          {/* Layer 1: Ambient Background - Mengisi seluruh layar tanpa celah */}
           <div
-            className="absolute inset-0 bg-cover bg-center blur-3xl opacity-60 scale-110"
+            className="absolute inset-0 bg-cover bg-center blur-3xl opacity-50 scale-110"
             style={{
               backgroundImage: `url(${slides[currentIndex].url})`,
             }}
           />
 
-          {/* Layer 2: Main Image (Menampilkan foto asli secara utuh tanpa terpotong) */}
+          {/* Layer 2: Main Image - Menampilkan foto utuh tanpa terpotong */}
           <div 
-            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700 z-10"
+            className="absolute inset-0 bg-contain bg-center bg-no-repeat transition-all duration-700"
             style={{ 
               backgroundImage: `url(${slides[currentIndex].url})`, 
-              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(0.9)` 
+              filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(1)` 
             }}
           />
-
-          {/* Layer 3: Overlay Gelap (Agar teks lebih mudah dibaca) */}
-          <div className="absolute inset-0 bg-black/40 z-20" />
         </motion.div>
       </AnimatePresence>
 
+      {/* Layer 3: Global Overlay - Berada di belakang teks tapi di atas gambar */}
+      <div className="absolute inset-0 bg-black/40 z-10 pointer-events-none" />
+
       {/* Content Overlay */}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6 py-10 sm:py-20">
+      <div className="relative z-30 h-full flex flex-col items-center justify-center text-center px-6 py-10 sm:py-20">
         <motion.div
           key={`content-${currentIndex}`}
           initial={{ y: 20, opacity: 0 }}
@@ -77,11 +77,11 @@ const HeroCarousel = () => {
           <p className="text-sm sm:text-lg md:text-2xl text-emerald-50 mb-6 sm:mb-8 max-w-3xl mx-auto font-light italic leading-relaxed whitespace-pre-wrap">
             {slides[currentIndex].subtitle}
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/kontak" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20 text-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center relative z-40">
+            <Link to="/kontak" className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3 rounded-full font-bold transition-all shadow-lg hover:shadow-emerald-500/20 text-center cursor-pointer">
               Kontak IMAMA
             </Link>
-            <Link to="/program-kerja" className="w-full sm:w-auto border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all text-center">
+            <Link to="/program-kerja" className="w-full sm:w-auto border-2 border-white/50 text-white hover:bg-white hover:text-emerald-900 px-8 py-3 rounded-full font-bold transition-all text-center cursor-pointer">
               Lihat Kegiatan
             </Link>
           </div>
@@ -91,19 +91,19 @@ const HeroCarousel = () => {
       {/* Navigation Controls */}
       <button 
         onClick={prevSlide}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
       >
         <ChevronLeft size={24} className="sm:w-8 sm:h-8" />
       </button>
-      <button 
+      <button
         onClick={nextSlide}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
       >
         <ChevronRight size={24} className="sm:w-8 sm:h-8" />
       </button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex gap-3">
         {slides.map((_, index) => (
           <button
             key={index}
