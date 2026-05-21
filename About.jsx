@@ -1,3 +1,23 @@
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Flag, Target, BookOpen, Lightbulb } from 'lucide-react';
+import { db } from './config';
+import { doc, onSnapshot } from 'firebase/firestore';
+
+const About = () => {
+  const [aboutData, setAboutData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onSnapshot(doc(db, 'settings', 'about'), (docSnap) => {
+      if (docSnap.exists()) {
+        setAboutData(docSnap.data());
+      }
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { staggerChildren: 0.2 } }
