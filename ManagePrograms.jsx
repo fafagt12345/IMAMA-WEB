@@ -8,6 +8,7 @@ const ManagePrograms = () => {
   const { data: programs = [] } = useFetch('programs');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [date, setDate] = useState('');
   const [photo, setPhoto] = useState(null);
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState('');
   const [editingId, setEditingId] = useState(null);
@@ -27,13 +28,13 @@ const ManagePrograms = () => {
         imageUrl = data.secure_url;
       }
 
-      const pData = { name, description, imageUrl, updatedAt: serverTimestamp() };
+      const pData = { name, description, date, imageUrl, updatedAt: serverTimestamp() };
       if (editingId) {
         await updateDoc(doc(db, 'programs', editingId), pData);
       } else {
         await addDoc(collection(db, 'programs'), { ...pData, createdAt: serverTimestamp() });
       }
-      setName(''); setDescription(''); setPhoto(null); setCurrentPhotoUrl(''); setEditingId(null);
+      setName(''); setDescription(''); setDate(''); setPhoto(null); setCurrentPhotoUrl(''); setEditingId(null);
       e.target.reset();
     } catch (err) { alert("Error: " + err.message); } finally { setLoading(false); }
   };
@@ -47,6 +48,7 @@ const ManagePrograms = () => {
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-sm mb-8 space-y-4 border border-gray-100">
           <div className="grid md:grid-cols-2 gap-4">
             <input type="text" placeholder="Nama Program" value={name} onChange={(e) => setName(e.target.value)} className="p-3 bg-gray-50 border rounded-xl outline-none" required />
+            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="p-3 bg-gray-50 border rounded-xl outline-none text-gray-700" required />
             <input type="file" onChange={(e) => setPhoto(e.target.files[0])} className="text-sm p-2" />
           </div>
           <textarea placeholder="Deskripsi Program Kerja..." value={description} onChange={(e) => setDescription(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl outline-none h-32" required />
@@ -61,9 +63,12 @@ const ManagePrograms = () => {
               <img src={p.imageUrl || 'https://via.placeholder.com/400x200'} className="w-full h-48 object-cover" alt="" />
               <div className="p-5 flex-1 flex flex-col">
                 <h3 className="font-bold text-emerald-900 text-lg mb-2">{p.name}</h3>
+                {p.date && (
+                  <p className="text-emerald-600 text-xs font-bold mb-2 uppercase tracking-wider italic">Dilaksanakan: {new Date(p.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                )}
                 <p className="text-gray-600 text-sm line-clamp-3 mb-4">{p.description}</p>
                 <div className="flex justify-end gap-3 mt-auto pt-4 border-t">
-                  <button onClick={() => { setEditingId(p.id); setName(p.name); setDescription(p.description); setCurrentPhotoUrl(p.imageUrl); window.scrollTo(0,0); }} className="text-blue-600 flex items-center gap-1 font-bold text-sm"><Edit size={16}/> Edit</button>
+                  <button onClick={() => { setEditingId(p.id); setName(p.name); setDescription(p.description); setDate(p.date || ''); setCurrentPhotoUrl(p.imageUrl); window.scrollTo(0,0); }} className="text-blue-600 flex items-center gap-1 font-bold text-sm"><Edit size={16}/> Edit</button>
                   <button onClick={() => confirm("Hapus program ini?") && deleteDoc(doc(db, 'programs', p.id))} className="text-red-600 flex items-center gap-1 font-bold text-sm"><Trash2 size={16}/> Hapus</button>
                 </div>
               </div>
