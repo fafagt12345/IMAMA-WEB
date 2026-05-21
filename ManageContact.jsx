@@ -9,7 +9,7 @@ const ManageContact = () => {
   const [whatsapp, setWhatsapp] = useState('');
   const [instagram, setInstagram] = useState('');
   const [tiktok, setTiktok] = useState('');
-  const [mapsUrl, setMapsUrl] = useState(''); // Keep mapsUrl for now, but remove input
+  const [mapsUrl, setMapsUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -41,6 +41,19 @@ const ManageContact = () => {
           <div>
             <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2"><MapPin size={16} /> Alamat Lengkap</label>
             <textarea value={address} onChange={(e) => setAddress(e.target.value)} className="w-full p-3 bg-gray-50 border rounded-xl h-24 focus:ring-2 focus:ring-emerald-500 outline-none" placeholder="Masukkan alamat sekretariat..." />
+          </div>
+          <div>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
+              <MapPin size={16} /> Google Maps Embed URL
+            </label>
+            <input 
+              type="text" 
+              value={mapsUrl} 
+              onChange={(e) => setMapsUrl(e.target.value)} 
+              className="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" 
+              placeholder="Tempelkan link 'src' dari iframe Google Maps..." 
+            />
+            <p className="text-[10px] text-gray-500 mt-1 italic">*Buka Google Maps > Bagikan > Sematkan Peta > Ambil link di dalam tanda kutip src="..."</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div>
