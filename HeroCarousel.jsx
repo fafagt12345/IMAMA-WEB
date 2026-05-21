@@ -51,7 +51,7 @@ const HeroCarousel = () => {
 
           {/* Layer 2: Main Image - Menampilkan foto utuh tanpa terpotong */}
           <div 
-            className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+            className="absolute inset-0 bg-contain sm:bg-cover bg-center bg-no-repeat transition-all duration-700"
             style={{ 
               backgroundImage: `url(${slides[currentIndex].url})`, 
               filter: `blur(${slides[currentIndex].blurLevel || 0}px) brightness(1)` 
