@@ -73,7 +73,7 @@ const HeroCarousel = () => {
           <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold text-white mb-4 drop-shadow-2xl leading-tight">
             {slides[currentIndex].title}
           </h1>
-          <p className="text-sm sm:text-lg md:text-2xl text-emerald-50 mb-6 sm:mb-8 max-w-3xl mx-auto font-light italic leading-relaxed">
+          <p className="text-base sm:text-lg md:text-2xl text-emerald-50 mb-8 max-w-3xl mx-auto font-light italic leading-relaxed whitespace-pre-wrap">
             {slides[currentIndex].subtitle}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
