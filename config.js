@@ -1,31 +1,10 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
-import { 
-  getFirestore,
-  initializeFirestore, 
-  persistentLocalCache, 
-  persistentMultipleTabManager 
-} from "firebase/firestore";
-import { getStorage } from "firebase/storage";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyC7BX34wi4w-gGXvLeAAtJKHwlqlyHEAUo",
-  authDomain: "imama-unesa.firebaseapp.com",
-  projectId: "imama-unesa",
-  storageBucket: "imama-unesa.firebasestorage.app",
-  messagingSenderId: "959135930232",
-  appId: "1:959135930232:web:75356fb595ca2beca55a8d",
-  measurementId: "G-E9WLD7MF6S"
-};
-
-// Initialize Firebase
-// Menggunakan pola singleton yang lebih tangguh untuk mencegah 'app/duplicate-app'
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+// Pastikan firebaseConfig Anda sudah didefinisikan di sini
+const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);
