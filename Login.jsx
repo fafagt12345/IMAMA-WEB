@@ -66,7 +66,44 @@ const Login = () => {
         </div>
 
         {error && (
-...
+          <div className="mb-4 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-4">
+          <div>
+            <input
+              type="email"
+              placeholder="Email Admin"
+              className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white outline-none transition"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full px-5 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white outline-none transition"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl hover:bg-emerald-800 transition disabled:opacity-50 shadow-lg shadow-emerald-900/20"
+          >
+            {loading ? 'Mencoba Masuk...' : 'Masuk ke Dashboard'}
+          </button>
+        </form>
+
+        <div className="mt-8">
+          <div className="relative flex items-center justify-center mb-8">
+            <div className="w-full border-t border-gray-200"></div>
             <span className="bg-white px-4 text-gray-400 text-[10px] font-bold uppercase tracking-tighter absolute">Atau</span>
           </div>
 
