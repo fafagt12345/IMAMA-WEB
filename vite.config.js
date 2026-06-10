@@ -7,8 +7,12 @@ export default defineConfig({
     // Memastikan hanya ada satu versi React yang digunakan, mencegah error resolusi CJS/ESM
     dedupe: ['react', 'react-dom'],
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react/jsx-runtime'],
+  },
   build: {
     commonjsOptions: {
+      include: [/node_modules/],
       transformMixedEsModules: true,
     },
   },
