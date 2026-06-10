@@ -39,8 +39,16 @@ const Login = () => {
       await signInWithPopup(auth, provider);
       navigate('/admin/dashboard');
     } catch (err) {
-      console.error("Google login error:", err);
-      setError('Gagal masuk dengan Google.');
+      console.error("Google login error code:", err.code);
+      if (err.code === 'auth/popup-closed-by-user') {
+        setError('Login dibatalkan karena popup ditutup.');
+      } else if (err.code === 'auth/cancelled-popup-request') {
+        setError('Proses login sedang berjalan, harap tunggu.');
+      } else if (err.code === 'auth/operation-not-allowed') {
+        setError('Metode login Google belum diaktifkan di Firebase Console.');
+      } else {
+        setError('Gagal masuk dengan Google. Pastikan koneksi internet stabil.');
+      }
     } finally {
       setLoading(false);
     }
@@ -58,46 +66,7 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="mb-6 p-3 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg">
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleLogin} className="space-y-5">
-          <div>
-            <label className="block text-gray-700 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-              placeholder="admin@imama.org"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-gray-700 text-xs font-bold uppercase tracking-widest mb-2 ml-1">Password</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-4 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
-              placeholder="••••••••"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl hover:bg-emerald-800 transition shadow-lg shadow-emerald-900/20 disabled:bg-gray-300"
-          >
-            {loading ? 'Memproses...' : 'Masuk ke Dashboard'}
-          </button>
-        </form>
-
-        <div className="mt-8">
-          <div className="relative flex items-center justify-center mb-6">
-            <div className="border-t w-full border-gray-200"></div>
+...
             <span className="bg-white px-4 text-gray-400 text-[10px] font-bold uppercase tracking-tighter absolute">Atau</span>
           </div>
 
