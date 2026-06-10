@@ -3,15 +3,10 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-    // Memastikan hanya ada satu versi React yang digunakan, mencegah error resolusi CJS/ESM
-    dedupe: ['react', 'react-dom'],
-  },
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'react/jsx-runtime'],
-  },
   build: {
     commonjsOptions: {
+      // Mencegah Rollup memproses React sebagai CJS, biarkan Vite menanganinya sebagai ESM
+      exclude: ['react', 'react-dom'],
       include: [/node_modules/],
       transformMixedEsModules: true,
     },
