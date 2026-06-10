@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
@@ -12,23 +12,24 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
-const app = initializeApp(firebaseConfig);
+// Hindari inisialisasi ganda
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 export const auth = getAuth(app);
 export const storage = getStorage(app);
 
-// Aktifkan Offline Persistence dengan API terbaru (FirestoreSettings.cache)
-// Gunakan fungsi yang langsung dieksekusi untuk memastikan urutan inisialisasi benar
 export const db = (() => {
+  // Hanya aktifkan persistence jika di browser
+  if (typeof window !== 'undefined') {
   try {
-    // initializeFirestore hanya bisa dipanggil satu kali sebelum getFirestore manapun dipanggil
     return initializeFirestore(app, {
       localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
     });
   } catch (e) {
-    // Jika sudah diinisialisasi (misalnya saat proses reload/HMR), ambil instance yang ada
     return getFirestore(app);
   }
+  }
+  return getFirestore(app);
 })();
 
 export default app;
