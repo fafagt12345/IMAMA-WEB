@@ -20,16 +20,17 @@ export const storage = getStorage(app);
 
 export const db = (() => {
   // Hanya aktifkan persistence jika di browser
-  if (typeof window !== 'undefined') {
-  try {
-    return initializeFirestore(app, {
-      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-    });
-  } catch (e) {
+  if (typeof window !== 'undefined' && window.indexedDB) {
+    try {
+      return initializeFirestore(app, {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+      });
+    } catch (e) {
+      console.warn("Firestore persistence failed to initialize:", e);
+      return getFirestore(app);
+    }
+  }
     return getFirestore(app);
-  }
-  }
-  return getFirestore(app);
 })();
 
 export default app;
