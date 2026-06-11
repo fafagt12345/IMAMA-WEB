@@ -1,21 +1,24 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { browserLocalPersistence, getAuth, setPersistence, GoogleAuthProvider } from 'firebase/auth';
+import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { initializeFirestore, persistentLocalCache, persistentMultipleTabManager, getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-const projectId = import.meta.env.VITE_FIREBASE_PROJECT_ID || '';
+// Fungsi untuk membersihkan spasi atau tanda kutip yang tidak sengaja terbawa dari ENV
+const sanitize = (val) => val?.trim().replace(/^["']|["']$/g, '') || '';
+
+const projectId = sanitize(import.meta.env.VITE_FIREBASE_PROJECT_ID);
 
 export const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  apiKey: sanitize(import.meta.env.VITE_FIREBASE_API_KEY),
   authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ||
+    sanitize(import.meta.env.VITE_FIREBASE_AUTH_DOMAIN) ||
     (projectId ? `${projectId}.firebaseapp.com` : ''),
   projectId,
   storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET ||
+    sanitize(import.meta.env.VITE_FIREBASE_STORAGE_BUCKET) ||
     (projectId ? `${projectId}.appspot.com` : ''),
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  messagingSenderId: sanitize(import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID),
+  appId: sanitize(import.meta.env.VITE_FIREBASE_APP_ID),
 };
 
 const missingConfig = Object.entries(firebaseConfig)
@@ -32,25 +35,12 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 
-if (typeof window !== 'undefined') {
-  setPersistence(auth, browserLocalPersistence).catch((error) => {
-    console.warn('Gagal mengaktifkan persistence auth:', error);
-  });
-}
-
 export const storage = getStorage(app);
 
 export const db = (() => {
-  // Hanya aktifkan persistence jika di browser
-  if (typeof window !== 'undefined' && typeof window.indexedDB !== 'undefined') {
-    try {
-      return initializeFirestore(app, {
-        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-      });
-    } catch (e) {
-      // Fallback ke getFirestore standar jika persistence gagal (misal di private mode)
-      return getFirestore(app);
-    }
+  // Sederhanakan inisialisasi untuk performa lebih cepat
+  if (typeof window !== 'undefined') {
+    return getFirestore(app);
   }
   return getFirestore(app);
 })();

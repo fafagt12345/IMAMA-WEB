@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, googleProvider, firebaseConfig } from './config';
-import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from './config';
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { LogIn, Github, Mail } from 'lucide-react';
 
 const Login = () => {
@@ -11,9 +11,18 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Cek apakah API Key tersedia
+  const isConfigReady = !!import.meta.env.VITE_FIREBASE_API_KEY;
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!isConfigReady) {
+      setError('Firebase API Key tidak ditemukan. Pastikan file .env sudah benar atau Environment Variables di Vercel sudah diatur.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -23,6 +32,8 @@ const Login = () => {
       console.error("Login error code:", err.code);
       if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
         setError('Email atau password yang Anda masukkan salah.');
+      } else if (err.code === 'auth/invalid-api-key' || err.message.includes('api-key-not-valid')) {
+        setError('API Key Firebase tidak valid. Periksa kembali konfigurasi di Vercel/Firebase.');
       } else if (err.code === 'auth/too-many-requests') {
         setError('Terlalu banyak percobaan login. Akun ditangguhkan sementara.');
       } else if (err.code === 'auth/operation-not-allowed') {
@@ -37,6 +48,12 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     setError('');
+
+    if (!isConfigReady) {
+      setError('Firebase API Key tidak ditemukan. Google Login tidak dapat dijalankan.');
+      return;
+    }
+
     setLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
@@ -47,6 +64,8 @@ const Login = () => {
         setError('Popup diblokir oleh browser. Silakan aktifkan izin popup.');
       } else if (err.code === 'auth/operation-not-allowed') {
         setError('Metode login Google belum diaktifkan di Firebase Console.');
+      } else if (err.code === 'auth/invalid-api-key') {
+        setError('API Key Firebase tidak valid.');
       } else if (err.code === 'auth/unauthorized-domain') {
         setError('Domain ini belum terdaftar di Authorized Domains Firebase Console.');
       } else {
@@ -60,7 +79,7 @@ const Login = () => {
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
       {/* Bagian Slide Layar Pertama (Hero Section) */}
-      <div className="lg:flex lg:w-1/2 bg-emerald-900 items-center justify-center p-12 text-white relative overflow-hidden">
+      <div className="flex flex-col lg:w-1/2 bg-emerald-900 items-center justify-center p-12 text-white relative overflow-hidden min-h-[40vh] lg:min-h-screen">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-400 rounded-full translate-x-1/3 translate-y-1/3 blur-3xl"></div>
@@ -99,7 +118,7 @@ const Login = () => {
 
           {error && (
             <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg animate-shake">
-              <p className="font-bold">Gagal Masuk</p>
+              <p className="font-bold flex items-center gap-2">⚠️ Perhatian</p>
               <p>{error}</p>
             </div>
           )}
