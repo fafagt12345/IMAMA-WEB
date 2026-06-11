@@ -1,3 +1,13 @@
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { auth, googleProvider } from './config';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { LogIn, Mail } from 'lucide-react';
+
+const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -69,20 +79,9 @@
           <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
             Dashboard Admin <span className="text-emerald-400">IMAMA</span>
           </h1>
-          {/* Sub-judul dengan font serif dan gaya miring (italic) */}
           <p className="text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 italic font-serif">
             Selamat datang kembali! Kelola informasi, struktur organisasi, dan konten website IMAMA UNESA dengan mudah dalam satu tempat.
           </p>
-          <div className="flex items-center space-x-4 justify-center lg:justify-start">
-            <div className="flex -space-x-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="w-10 h-10 rounded-full border-2 border-emerald-900 bg-emerald-800 flex items-center justify-center text-xs font-bold">
-                  {i}
-                </div>
-              ))}
-            </div>
-            <span className="text-sm text-emerald-200">Terintegrasi dengan Firebase Cloud</span>
-          </div>
         </div>
       </div>
 
@@ -135,23 +134,6 @@
               {loading ? 'Memproses...' : 'Masuk Dashboard'}
             </button>
           </form>
-
-          <div className="mt-8">
-            <div className="relative flex items-center py-4">
-              <div className="flex-grow border-t border-gray-200"></div>
-              <span className="flex-shrink mx-4 text-gray-400 text-sm">Atau</span>
-              <div className="flex-grow border-t border-gray-200"></div>
-            </div>
-
-            <button
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold py-3.5 rounded-xl transition-all flex items-center justify-center space-x-3"
-            >
-              <img src="https://www.gstatic.com/firebase/anonymous-scan.png" className="w-5 h-5 grayscale opacity-70" alt="" />
-              <span>Masuk dengan Google</span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

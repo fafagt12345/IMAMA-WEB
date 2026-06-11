@@ -1,3 +1,43 @@
+import React, { useState } from 'react';
+import { db } from './config';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { Image as ImageIcon, Plus } from 'lucide-react';
+
+const ManageHero = () => {
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [blurLevel, setBlurLevel] = useState(0);
+  const [photo, setPhoto] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleAddSlide = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      let imageUrl = '';
+      if (photo) {
+        const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        const formData = new FormData();
+        formData.append('file', photo);
+        formData.append('upload_preset', UPLOAD_PRESET);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        imageUrl = data.secure_url;
+      }
+
+      await addDoc(collection(db, 'hero_slides'), {
+        title, subtitle, blurLevel, imageUrl, createdAt: serverTimestamp()
+      });
+
+      setTitle(''); setSubtitle(''); setBlurLevel(0); setPhoto(null);
+      alert("Slide berhasil ditambahkan!");
+    } catch (err) {
       alert("Gagal: " + err.message);
     } finally { setLoading(false); }
   };
@@ -28,3 +68,9 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+};
+
+export default ManageHero;
