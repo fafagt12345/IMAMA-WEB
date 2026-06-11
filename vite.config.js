@@ -5,18 +5,21 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      // Secara eksplisit memetakan jalur CJS yang bermasalah ke jalur ESM yang benar
-      // Ini seringkali menjadi solusi untuk error "Could not resolve ./cjs/react-jsx-runtime.production.min.js"
+      // Fix untuk error build Vercel: map path CJS React/ReactDOM ke entry yang benar
       './cjs/react-jsx-runtime.production.min.js': 'react/jsx-runtime',
-      './cjs/react.production.min.js': 'react', // Juga alias react itu sendiri
+      './cjs/react.production.min.js': 'react',
+      './cjs/react-dom.production.min.js': 'react-dom',
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
   build: {
     commonjsOptions: {
-      transformMixedEsModules: true, // Penting untuk paket campuran CJS/ESM
+      transformMixedEsModules: true,
     },
   },
   define: {
-    'process.env.NODE_ENV': JSON.stringify('production'), // Memastikan NODE_ENV diatur dengan benar
+    'process.env.NODE_ENV': JSON.stringify('production'),
   },
 });
