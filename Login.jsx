@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { auth } from './config';
+import { signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
+import { auth, firebaseConfig } from './config';
 import { LogIn } from 'lucide-react';
 
 const Login = () => {
@@ -32,22 +32,44 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
+    const hasRequiredConfig = Object.values(firebaseConfig).every(Boolean);
+
+    if (!hasRequiredConfig) {
+      setError('Konfigurasi Firebase belum lengkap. Isi variabel VITE_FIREBASE_* di Vercel dan Firebase Console terlebih dahulu.');
+      return;
+    }
+
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    provider.addScope('email');
+    provider.addScope('profile');
+
     setLoading(true);
     setError('');
+
     try {
       await signInWithPopup(auth, provider);
       navigate('/admin/dashboard');
     } catch (err) {
-      console.error("Google login error code:", err.code);
-      if (err.code === 'auth/popup-closed-by-user') {
-        setError('Login dibatalkan karena popup ditutup.');
-      } else if (err.code === 'auth/cancelled-popup-request') {
-        setError('Proses login sedang berjalan, harap tunggu.');
-      } else if (err.code === 'auth/operation-not-allowed') {
+      console.error('Google login error code:', err?.code, err);
+
+      if (err?.code === 'auth/popup-blocked' || err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') {
+        try {
+          await signInWithRedirect(auth, provider);
+          return;
+        } catch (redirectError) {
+          console.error('Google redirect error:', redirectError);
+          setError('Popup diblokir oleh browser. Silakan izinkan popup atau ulangi dari tab yang aman.');
+          return;
+        }
+      }
+
+      if (err?.code === 'auth/operation-not-allowed') {
         setError('Metode login Google belum diaktifkan di Firebase Console.');
+      } else if (err?.code === 'auth/invalid-credential') {
+        setError('Kredensial Google tidak valid. Coba lagi dalam beberapa saat.');
       } else {
-        setError('Gagal masuk dengan Google. Pastikan koneksi internet stabil.');
+        setError('Gagal masuk dengan Google. Pastikan domain auth sudah terdaftar di Firebase Console dan koneksi internet stabil.');
       }
     } finally {
       setLoading(false);
