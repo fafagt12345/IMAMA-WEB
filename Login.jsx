@@ -1,18 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { auth, googleProvider } from './config';
-import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-import { LogIn, Github, Mail } from 'lucide-react';
-
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   // Cek apakah API Key tersedia
-  const isConfigReady = !!import.meta.env.VITE_FIREBASE_API_KEY;
+  const isConfigReady = 
+    import.meta.env.VITE_FIREBASE_API_KEY && 
+    !import.meta.env.VITE_FIREBASE_API_KEY.includes('your_firebase_api_key');
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -36,10 +28,8 @@ const Login = () => {
         setError('API Key Firebase tidak valid. Periksa kembali konfigurasi di Vercel/Firebase.');
       } else if (err.code === 'auth/too-many-requests') {
         setError('Terlalu banyak percobaan login. Akun ditangguhkan sementara.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError('Metode login Email/Password belum diaktifkan di Firebase Console.');
       } else {
-        setError(`Error: ${err.message}`);
+        setError('Terjadi kesalahan saat masuk. Silakan coba lagi.');
       }
     } finally {
       setLoading(false);
@@ -48,29 +38,16 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     setError('');
-
     if (!isConfigReady) {
-      setError('Firebase API Key tidak ditemukan. Google Login tidak dapat dijalankan.');
+      setError('Konfigurasi Google Login belum siap.');
       return;
     }
-
     setLoading(true);
     try {
       await signInWithPopup(auth, googleProvider);
       navigate('/admin/dashboard');
     } catch (err) {
-      console.error("Google login error:", err);
-      if (err.code === 'auth/popup-blocked') {
-        setError('Popup diblokir oleh browser. Silakan aktifkan izin popup.');
-      } else if (err.code === 'auth/operation-not-allowed') {
-        setError('Metode login Google belum diaktifkan di Firebase Console.');
-      } else if (err.code === 'auth/invalid-api-key') {
-        setError('API Key Firebase tidak valid.');
-      } else if (err.code === 'auth/unauthorized-domain') {
-        setError('Domain ini belum terdaftar di Authorized Domains Firebase Console.');
-      } else {
-        setError('Gagal masuk dengan Google. Pastikan koneksi stabil.');
-      }
+      setError('Gagal masuk dengan Google. Periksa izin domain di Firebase.');
     } finally {
       setLoading(false);
     }
@@ -78,7 +55,7 @@ const Login = () => {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-white">
-      {/* Bagian Slide Layar Pertama (Hero Section) */}
+      {/* Bagian Hero Banner (Slide Layar Pertama) */}
       <div className="flex flex-col lg:w-1/2 bg-emerald-900 items-center justify-center p-12 text-white relative overflow-hidden min-h-[40vh] lg:min-h-screen">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
@@ -92,7 +69,8 @@ const Login = () => {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
             Dashboard Admin <span className="text-emerald-400">IMAMA</span>
           </h1>
-          <p className="text-emerald-100 text-lg mb-8 leading-relaxed opacity-90">
+          {/* Sub-judul dengan font serif dan gaya miring (italic) */}
+          <p className="text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 italic font-serif">
             Selamat datang kembali! Kelola informasi, struktur organisasi, dan konten website IMAMA UNESA dengan mudah dalam satu tempat.
           </p>
           <div className="flex items-center space-x-4 justify-center lg:justify-start">
@@ -111,13 +89,13 @@ const Login = () => {
       {/* Form Login */}
       <div className="flex-1 flex items-center justify-center p-8 lg:p-16 bg-gray-50">
         <div className="w-full max-w-md">
-          <div className="mb-10">
+          <div className="mb-10 text-center lg:text-left">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">Login Admin</h2>
-            <p className="text-gray-500">Gunakan akun admin yang terdaftar untuk melanjutkan.</p>
+            <p className="text-gray-500">Masuk untuk mengelola konten website.</p>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg animate-shake">
+            <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg">
               <p className="font-bold flex items-center gap-2">⚠️ Perhatian</p>
               <p>{error}</p>
             </div>
@@ -125,13 +103,12 @@ const Login = () => {
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input
                   type="email"
-                  placeholder="admin@imama.com"
-                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                  className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -143,8 +120,7 @@ const Login = () => {
               <label className="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
               <input
                 type="password"
-                placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -154,9 +130,9 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-emerald-700/20 disabled:opacity-50 flex items-center justify-center space-x-2"
+              className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg disabled:opacity-50"
             >
-              <span>{loading ? 'Memproses...' : 'Masuk Dashboard'}</span>
+              {loading ? 'Memproses...' : 'Masuk Dashboard'}
             </button>
           </form>
 

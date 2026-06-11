@@ -38,10 +38,7 @@ export const googleProvider = new GoogleAuthProvider();
 export const storage = getStorage(app);
 
 export const db = (() => {
-  // Sederhanakan inisialisasi untuk performa lebih cepat
-  if (typeof window !== 'undefined') {
-    return getFirestore(app);
-  }
+  // Instance Firestore standar tanpa sinkronisasi cache yang berat
   return getFirestore(app);
 })();
 
