@@ -40,12 +40,19 @@ const ManageHero = () => {
           method: 'POST',
           body: formData
         });
+        
+        if (!res.ok) throw new Error("Gagal mengunggah foto ke Cloudinary. Cek konfigurasi ENV Anda.");
+        
         const data = await res.json();
+        if (!data.secure_url) throw new Error("Cloudinary tidak mengembalikan URL gambar.");
         imageUrl = data.secure_url;
       }
 
       const slideData = {
-        title, subtitle, blurLevel, imageUrl, 
+        title, 
+        subtitle, 
+        blurLevel, 
+        imageUrl: imageUrl || '', // Pastikan tidak undefined (fallback ke string kosong)
         titleFont,
         titleItalic,
         subtitleFont,
