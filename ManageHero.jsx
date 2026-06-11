@@ -10,7 +10,7 @@ const ManageHero = () => {
   const [blurLevel, setBlurLevel] = useState(0);
   const [titleFont, setTitleFont] = useState('font-sans');
   const [titleItalic, setTitleItalic] = useState(false);
-  const [subtitleFont, setSubtitleFont] = useState('font-serif');
+  const [subtitleFont, setSubtitleFont] = useState('font-sans');
   const [subtitleItalic, setSubtitleItalic] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState('');
@@ -90,8 +90,8 @@ const ManageHero = () => {
     setBlurLevel(slide.blurLevel);
     setTitleFont(slide.titleFont || 'font-sans');
     setTitleItalic(slide.titleItalic || false);
-    setSubtitleFont(slide.subtitleFont || 'font-serif');
-    setSubtitleItalic(slide.subtitleItalic || false);
+    setSubtitleFont(slide.subtitleFont || 'font-sans');
+    setSubtitleItalic(!!slide.subtitleItalic); // Memastikan boolean murni
     setCurrentPhotoUrl(slide.imageUrl || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -99,7 +99,7 @@ const ManageHero = () => {
   const resetForm = () => {
     setTitle(''); setSubtitle(''); setBlurLevel(0); setPhoto(null);
     setTitleFont('font-sans'); setTitleItalic(false);
-    setSubtitleFont('font-serif'); setSubtitleItalic(false);
+    setSubtitleFont('font-sans'); setSubtitleItalic(false);
     setEditingId(null); setCurrentPhotoUrl('');
   };
 
@@ -156,7 +156,7 @@ const ManageHero = () => {
                 placeholder="Sub-judul"
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont} ${subtitleItalic ? 'italic' : ''}`}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-sans'} ${subtitleItalic ? 'italic' : ''}`}
                 required
               />
               <div className="flex gap-2">
@@ -214,7 +214,7 @@ const ManageHero = () => {
               </div>
               <div className="p-4">
                 <h3 className={`font-bold text-emerald-900 ${slide.titleFont} ${slide.titleItalic ? 'italic' : ''}`}>{slide.title}</h3>
-                <p className={`text-sm text-gray-600 ${slide.subtitleFont} ${slide.subtitleItalic ? 'italic' : ''}`}>{slide.subtitle}</p>
+                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-sans'} ${slide.subtitleItalic ? 'italic' : ''}`}>{slide.subtitle}</p>
                 <div className="mt-2 text-[10px] text-gray-400 uppercase tracking-widest">Blur: {slide.blurLevel}</div>
               </div>
             </div>
