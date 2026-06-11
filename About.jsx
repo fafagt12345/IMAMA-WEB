@@ -71,7 +71,7 @@ const About = () => {
         >
           {/* Visi */}
           <div className="p-10 bg-emerald-900 rounded-[3rem] shadow-xl text-white">
-            <h2 className="text-3xl font-bold mb-6 flex items-center gap-3 italic">
+            <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
               <Target /> Visi
             </h2>
             <p className="text-lg leading-relaxed font-light whitespace-pre-wrap">{vision}</p>
@@ -82,7 +82,7 @@ const About = () => {
             variants={containerVariants}
             className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg"
           >
-            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3">
               <Flag /> Misi
             </h2>
             <ul className="space-y-4">
@@ -101,7 +101,7 @@ const About = () => {
         {/* Sejarah & Logo Section */}
         <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
           <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+            <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3">
               <BookOpen /> Sejarah
             </h2>
             <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{history}</p>
@@ -113,7 +113,7 @@ const About = () => {
 
         {/* Filosofi Logo Section */}
         <motion.div variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true }} className="p-10 border-2 border-emerald-900 rounded-[3rem] shadow-lg">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3 italic">
+          <h2 className="text-3xl font-bold text-emerald-900 mb-6 flex items-center gap-3">
             <Lightbulb /> Filosofi Logo
           </h2>
           <ul className="space-y-4">

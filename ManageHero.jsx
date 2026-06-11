@@ -156,7 +156,7 @@ const ManageHero = () => {
                 placeholder="Sub-judul"
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-sans'} ${subtitleItalic ? 'italic' : ''}`}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-sans'} ${subtitleItalic === true ? 'italic' : 'not-italic'}`}
                 required
               />
               <div className="flex gap-2">
@@ -214,7 +214,7 @@ const ManageHero = () => {
               </div>
               <div className="p-4">
                 <h3 className={`font-bold text-emerald-900 ${slide.titleFont} ${slide.titleItalic ? 'italic' : ''}`}>{slide.title}</h3>
-                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-sans'} ${slide.subtitleItalic ? 'italic' : ''}`}>{slide.subtitle}</p>
+                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-sans'} ${slide.subtitleItalic === true ? 'italic' : 'not-italic'}`}>{slide.subtitle}</p>
                 <div className="mt-2 text-[10px] text-gray-400 uppercase tracking-widest">Blur: {slide.blurLevel}</div>
               </div>
             </div>

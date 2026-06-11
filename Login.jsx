@@ -98,7 +98,7 @@ const Login = () => {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
             Dashboard Admin <span className="text-emerald-400">IMAMA</span>
           </h1>
-          <p className={`text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 ${heroSlide?.subtitleFont || 'font-sans'} ${heroSlide?.subtitleItalic ? 'italic' : ''}`}>
+          <p className={`text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 ${heroSlide?.subtitleFont || 'font-sans'} ${heroSlide?.subtitleItalic === true ? 'italic' : 'not-italic'}`}>
             {heroSlide?.subtitle || 'Selamat datang kembali! Kelola informasi, struktur organisasi, dan konten website IMAMA UNESA dengan mudah dalam satu tempat.'}
           </p>
         </div>
