@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { auth, googleProvider } from './config';
+import { auth, googleProvider, db } from './config'; // Import db
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { LogIn, Mail } from 'lucide-react';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'; // Import Firestore functions
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -10,6 +11,24 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [heroSlide, setHeroSlide] = useState(null); // State untuk data hero slide
+
+  // Fetch hero slide data
+  useEffect(() => {
+    const q = query(collection(db, 'hero_slides'), orderBy('createdAt', 'desc'), limit(1));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      if (!snapshot.empty) {
+        setHeroSlide({ id: snapshot.docs[0].id, ...snapshot.docs[0].data() });
+      } else {
+        setHeroSlide(null); // Reset if no slides
+      }
+    }, (err) => {
+      console.error("Error fetching hero slide for login page:", err);
+      // Fallback to default if there's an error
+      setHeroSlide(null);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Cek apakah API Key tersedia
   const isConfigReady = 
@@ -79,8 +98,8 @@ const Login = () => {
           <h1 className="text-4xl lg:text-5xl font-bold mb-6 leading-tight">
             Dashboard Admin <span className="text-emerald-400">IMAMA</span>
           </h1>
-          <p className="text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 font-serif">
-            Selamat datang kembali! Kelola informasi, struktur organisasi, dan konten website IMAMA UNESA dengan mudah dalam satu tempat.
+          <p className={`text-emerald-100 text-lg mb-8 leading-relaxed opacity-90 ${heroSlide?.subtitleFont || 'font-serif'} ${heroSlide?.subtitleItalic ? 'italic' : ''}`}>
+            {heroSlide?.subtitle || 'Selamat datang kembali! Kelola informasi, struktur organisasi, dan konten website IMAMA UNESA dengan mudah dalam satu tempat.'}
           </p>
         </div>
       </div>

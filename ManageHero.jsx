@@ -49,14 +49,14 @@ const ManageHero = () => {
       }
 
       const slideData = {
-        title, 
-        subtitle, 
-        blurLevel, 
-        imageUrl: imageUrl || '', // Pastikan tidak undefined (fallback ke string kosong)
-        titleFont,
-        titleItalic,
-        subtitleFont,
-        subtitleItalic,
+        title: title || '', 
+        subtitle: subtitle || '', 
+        blurLevel: Number(blurLevel) || 0, 
+        imageUrl: imageUrl || '', 
+        titleFont: titleFont || 'font-sans',
+        titleItalic: Boolean(titleItalic),
+        subtitleFont: subtitleFont || 'font-serif',
+        subtitleItalic: Boolean(subtitleItalic),
         updatedAt: serverTimestamp()
       };
 
@@ -92,7 +92,7 @@ const ManageHero = () => {
     setTitleItalic(slide.titleItalic || false);
     setSubtitleFont(slide.subtitleFont || 'font-serif');
     setSubtitleItalic(slide.subtitleItalic || false);
-    setCurrentPhotoUrl(slide.imageUrl);
+    setCurrentPhotoUrl(slide.imageUrl || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -120,13 +120,13 @@ const ManageHero = () => {
             {/* Judul Section */}
             <div className="space-y-3">
               <label className="text-sm font-bold text-gray-700">Konfigurasi Judul</label>
-              <input 
-                type="text" 
-                placeholder="Judul Slide" 
-                value={title} 
-                onChange={(e) => setTitle(e.target.value)} 
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${titleFont} ${titleItalic ? 'italic' : ''}`} 
-                required 
+              <input
+                type="text"
+                placeholder="Judul Slide"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${titleFont} ${titleItalic ? 'italic' : ''}`}
+                required
               />
               <div className="flex gap-2">
                 <select 
@@ -151,13 +151,13 @@ const ManageHero = () => {
             {/* Sub-judul Section */}
             <div className="space-y-3">
               <label className="text-sm font-bold text-gray-700">Konfigurasi Sub-judul</label>
-              <input 
-                type="text" 
-                placeholder="Sub-judul" 
-                value={subtitle} 
-                onChange={(e) => setSubtitle(e.target.value)} 
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont} ${subtitleItalic ? 'italic' : ''}`} 
-                required 
+              <input
+                type="text"
+                placeholder="Sub-judul"
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont} ${subtitleItalic ? 'italic' : ''}`}
+                required
               />
               <div className="flex gap-2">
                 <select 
