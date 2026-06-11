@@ -55,7 +55,7 @@ const ManageHero = () => {
         imageUrl: imageUrl || '', 
         titleFont: titleFont || 'font-sans',
         titleItalic: Boolean(titleItalic),
-        subtitleFont: subtitleFont || 'font-serif',
+        subtitleFont: subtitleFont || 'font-sans',
         subtitleItalic: Boolean(subtitleItalic),
         updatedAt: serverTimestamp()
       };
