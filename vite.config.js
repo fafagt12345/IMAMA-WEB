@@ -13,4 +13,5 @@ export default defineConfig({
       // Menangani transformasi modul campuran (CommonJS & ESM)
       transformMixedEsModules: true,
     },
+  },
 });
