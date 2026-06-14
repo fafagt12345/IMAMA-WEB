@@ -15,6 +15,54 @@ const getStoragePathFromUrl = (downloadUrl) => {
   }
 };
 
+const compressImage = (file) => new Promise((resolve, reject) => {
+  if (!file || !file.type.startsWith('image/')) {
+    resolve(file);
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const maxWidth = 1200;
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width;
+        width = maxWidth;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(width);
+      canvas.height = Math.round(height);
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const quality = file.size > 900000 ? 0.72 : 0.85;
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error('Gagal memproses gambar.'));
+            return;
+          }
+
+          resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
+        },
+        'image/jpeg',
+        quality
+      );
+    };
+    img.onerror = () => reject(new Error('Gagal membaca gambar.'));
+    img.src = reader.result;
+  };
+
+  reader.onerror = () => reject(new Error('Gagal membuka file gambar.'));
+  reader.readAsDataURL(file);
+});
+
 const ManageEvents = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -109,8 +157,9 @@ const ManageEvents = () => {
       }
 
       let imageUrl = currentImageUrl || formData.imageUrl || '';
+      let imageToUpload = imageFile ? await compressImage(imageFile) : null;
 
-      if (imageFile) {
+      if (imageToUpload) {
         if (currentImageUrl || formData.imageUrl) {
           try {
             const oldRef = ref(storage, getStoragePathFromUrl(currentImageUrl || formData.imageUrl));
@@ -120,9 +169,14 @@ const ManageEvents = () => {
           }
         }
 
-        const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
-        await uploadBytes(storageRef, imageFile);
-        imageUrl = await getDownloadURL(storageRef);
+        try {
+          const storageRef = ref(storage, `events/${Date.now()}_${imageToUpload.name}`);
+          await uploadBytes(storageRef, imageToUpload);
+          imageUrl = await getDownloadURL(storageRef);
+        } catch (uploadErr) {
+          console.warn('Upload gambar event gagal, lanjutkan dengan data yang ada:', uploadErr);
+          imageUrl = currentImageUrl || formData.imageUrl || '';
+        }
       }
 
       const registrationUrl = normalizeLink(formData.registrationUrl);
