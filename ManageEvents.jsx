@@ -18,6 +18,7 @@ const getStoragePathFromUrl = (downloadUrl) => {
 const ManageEvents = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [imageFile, setImageFile] = useState(null);
@@ -82,10 +83,26 @@ const ManageEvents = () => {
     setCurrentImageUrl('');
   };
 
+  const normalizeLink = (value) => {
+    const raw = (value || '').trim();
+    if (!raw) return '';
+
+    if (/^https?:\/\//i.test(raw) || /^mailto:/i.test(raw)) {
+      return raw;
+    }
+
+    return `https://${raw}`;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (submitting) return;
+
     try {
+      setSubmitting(true);
+      setError('');
+
       if (imageFile && !imageFile.type.startsWith('image/')) {
         setError('Harap unggah file gambar yang valid.');
         return;
@@ -108,6 +125,8 @@ const ManageEvents = () => {
         imageUrl = await getDownloadURL(storageRef);
       }
 
+      const registrationUrl = normalizeLink(formData.registrationUrl);
+
       const payload = {
         title: formData.title.trim(),
         type: formData.type,
@@ -115,7 +134,7 @@ const ManageEvents = () => {
         date: formData.date,
         location: formData.location.trim(),
         imageUrl: imageUrl.trim(),
-        registrationUrl: formData.registrationUrl.trim(),
+        registrationUrl,
         status: formData.status || 'aktif',
         updatedAt: serverTimestamp(),
         updatedBy: auth.currentUser?.email || 'admin',
@@ -136,6 +155,8 @@ const ManageEvents = () => {
     } catch (err) {
       console.error('Error saving event:', err);
       setError('Gagal menyimpan data. Periksa koneksi database Anda.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -234,8 +255,9 @@ const ManageEvents = () => {
             )}
           </div>
           <input
-            type="url"
-            placeholder="Link pendaftaran / detail (opsional)"
+            type="text"
+            inputMode="url"
+            placeholder="Link pendaftaran / detail (opsional, bisa langsung klik)"
             className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             value={formData.registrationUrl}
             onChange={(e) => setFormData({ ...formData, registrationUrl: e.target.value })}
@@ -247,8 +269,12 @@ const ManageEvents = () => {
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           />
-          <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
-            {isEditing ? <><Edit2 size={16} /> Simpan Perubahan</> : <><Plus size={16} /> Tambah Data</>}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {submitting ? 'Memproses...' : (isEditing ? <><Edit2 size={16} /> Simpan Perubahan</> : <><Plus size={16} /> Tambah Data</>)}
           </button>
         </div>
       </form>

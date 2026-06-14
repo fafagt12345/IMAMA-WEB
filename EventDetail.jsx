@@ -39,6 +39,8 @@ const EventDetail = () => {
     );
   }
 
+  const registrationUrl = event?.registrationUrl ? (/^https?:\/\//i.test(event.registrationUrl) || /^mailto:/i.test(event.registrationUrl) ? event.registrationUrl : `https://${event.registrationUrl}`) : '';
+
   return (
     <main className="min-h-screen bg-[linear-gradient(180deg,#f8fffb_0%,#ffffff_45%,#f7fafc_100%)] pt-28 pb-16 text-slate-900">
       <section className="mx-auto grid w-full max-w-7xl gap-8 px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
@@ -56,8 +58,8 @@ const EventDetail = () => {
             <div className="flex items-center gap-3"><Sparkles size={16} className="text-emerald-600" /> <span>Status: {event.status || 'aktif'}</span></div>
           </div>
 
-          {event.registrationUrl && (
-            <a href={event.registrationUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">
+          {registrationUrl && (
+            <a href={registrationUrl} target="_blank" rel="noreferrer" className="mt-6 inline-flex items-center rounded-full bg-emerald-700 px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-800">
               Daftar / Lihat informasi lebih lanjut
             </a>
           )}
