@@ -1,139 +1,260 @@
-import React, { useState, useEffect } from 'react';
-import { db } from './config';
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
-import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { db, auth } from './config';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { Edit2, Eye, EyeOff, Filter, Plus, Search, Trash2 } from 'lucide-react';
 
 const ManageEvents = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [page, setPage] = useState(1);
   const [formData, setFormData] = useState({
-    id: '', title: '', type: 'event', description: '', date: '', status: 'aktif'
+    id: '',
+    title: '',
+    type: 'event',
+    description: '',
+    date: '',
+    status: 'aktif',
   });
 
-  const fetchData = async () => {
+  useEffect(() => {
     setLoading(true);
     const q = query(collection(db, 'events_contests'), orderBy('date', 'desc'));
-    const snapshot = await getDocs(q);
-    setItems(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
-    setLoading(false);
-  };
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        setItems(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        setLoading(false);
+        setError('');
+      },
+      (err) => {
+        console.error('Error loading events:', err);
+        setError('Tidak dapat memuat data event/lomba saat ini.');
+        setLoading(false);
+      }
+    );
 
-  useEffect(() => { fetchData(); }, []);
+    return () => unsubscribe();
+  }, []);
+
+  const filteredItems = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return items.filter((item) => {
+      const matchesSearch = !term || [item.title, item.description, item.type].join(' ').toLowerCase().includes(term);
+      const matchesType = typeFilter === 'all' || item.type === typeFilter;
+      const matchesStatus = statusFilter === 'all' || item.status === statusFilter;
+      return matchesSearch && matchesType && matchesStatus;
+    });
+  }, [items, searchTerm, typeFilter, statusFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / 6));
+  const pageItems = filteredItems.slice((page - 1) * 6, page * 6);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchTerm, typeFilter, statusFilter]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      const payload = {
+        title: formData.title.trim(),
+        type: formData.type,
+        description: formData.description.trim(),
+        date: formData.date,
+        status: formData.status || 'aktif',
+        updatedAt: serverTimestamp(),
+        updatedBy: auth.currentUser?.email || 'admin',
+      };
+
       if (isEditing) {
-        await updateDoc(doc(db, 'events_contests', formData.id), {
-          title: formData.title,
-          type: formData.type,
-          description: formData.description,
-          date: formData.date,
-          status: formData.status
-        });
+        await updateDoc(doc(db, 'events_contests', formData.id), payload);
       } else {
         await addDoc(collection(db, 'events_contests'), {
-          ...formData,
-          createdAt: new Date().toISOString()
+          ...payload,
+          createdAt: serverTimestamp(),
+          createdBy: auth.currentUser?.email || 'admin',
         });
       }
+
       setFormData({ id: '', title: '', type: 'event', description: '', date: '', status: 'aktif' });
       setIsEditing(false);
-      fetchData();
-    } catch (error) { console.error("Error saving:", error); }
+    } catch (err) {
+      console.error('Error saving event:', err);
+      setError('Gagal menyimpan data. Periksa koneksi database Anda.');
+    }
   };
 
   const toggleStatus = async (item) => {
-    const newStatus = item.status === 'aktif' ? 'nonaktif' : 'aktif';
-    await updateDoc(doc(db, 'events_contests', item.id), { status: newStatus });
-    fetchData();
+    const nextStatus = item.status === 'aktif' ? 'nonaktif' : 'aktif';
+    await updateDoc(doc(db, 'events_contests', item.id), {
+      status: nextStatus,
+      updatedAt: serverTimestamp(),
+      updatedBy: auth.currentUser?.email || 'admin',
+    });
+  };
+
+  const handleDelete = async (item) => {
+    if (!window.confirm(`Hapus ${item.title}?`)) return;
+    await deleteDoc(doc(db, 'events_contests', item.id));
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-sm">
-      <h2 className="text-2xl font-bold text-emerald-900 mb-6">Kelola Event & Lomba</h2>
-      
-      {/* Form Input */}
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 bg-gray-50 p-6 rounded-lg">
+    <div className="mx-auto max-w-7xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
+      <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-sm uppercase tracking-[0.35em] text-emerald-600">Menu Admin</p>
+          <h2 className="text-2xl font-bold text-emerald-950">Kelola Event & Lomba</h2>
+          <p className="text-sm text-slate-500">Tambahkan, edit, aktifkan, dan hapus data event/lomba dengan pencarian, filter, serta status real-time.</p>
+        </div>
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">Total data: {filteredItems.length}</div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="mb-8 grid gap-4 rounded-3xl border border-slate-200 bg-slate-50 p-5 md:grid-cols-2">
         <div className="space-y-4">
-          <input 
-            className="w-full p-2 border rounded" 
-            placeholder="Judul" 
-            value={formData.title} 
-            onChange={e => setFormData({...formData, title: e.target.value})} 
-            required 
+          <input
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            placeholder="Judul event atau lomba"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            required
           />
-          <select 
-            className="w-full p-2 border rounded"
+          <select
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             value={formData.type}
-            onChange={e => setFormData({...formData, type: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, type: e.target.value })}
           >
             <option value="event">Event</option>
             <option value="lomba">Lomba</option>
           </select>
+          <select
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          >
+            <option value="aktif">Aktif</option>
+            <option value="nonaktif">Nonaktif</option>
+          </select>
         </div>
         <div className="space-y-4">
-          <input 
-            type="date" 
-            className="w-full p-2 border rounded" 
-            value={formData.date} 
-            onChange={e => setFormData({...formData, date: e.target.value})} 
-            required 
+          <input
+            type="date"
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            required
           />
-          <button type="submit" className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700 flex items-center justify-center gap-2 transition-all">
-            {isEditing ? <><Edit2 size={16} /> Update</> : <><Plus size={16} /> Tambah</>}
-          </button>
-        </div>
-        <div className="md:col-span-2">
-          <textarea 
-            placeholder="Deskripsi Singkat" 
-            className="w-full p-2 border rounded" 
-            rows="3"
+          <textarea
+            placeholder="Deskripsi singkat event atau lomba"
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            rows="4"
             value={formData.description}
-            onChange={e => setFormData({...formData, description: e.target.value})}
-          ></textarea>
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+          <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-800">
+            {isEditing ? <><Edit2 size={16} /> Simpan Perubahan</> : <><Plus size={16} /> Tambah Data</>}
+          </button>
         </div>
       </form>
 
-      {/* Daftar Item */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="bg-emerald-100 text-emerald-900">
-              <th className="p-3">Judul</th>
-              <th className="p-3">Tipe</th>
-              <th className="p-3">Tanggal</th>
-              <th className="p-3">Status</th>
-              <th className="p-3 text-right">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map(item => (
-              <tr key={item.id} className="border-b hover:bg-gray-50">
-                <td className="p-3 font-medium">{item.title}</td>
-                <td className="p-3 capitalize">{item.type}</td>
-                <td className="p-3 text-gray-600">{item.date}</td>
-                <td className="p-3">
-                  <span className={`px-2 py-1 rounded text-xs ${item.status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                    {item.status}
-                  </span>
-                </td>
-                <td className="p-3 text-right space-x-2">
-                  <button onClick={() => toggleStatus(item)} className="text-gray-500 hover:text-emerald-600">
-                    {item.status === 'aktif' ? <Eye size={18} /> : <EyeOff size={18} />}
-                  </button>
-                  <button onClick={() => { setIsEditing(true); setFormData(item); }} className="text-blue-500 hover:text-blue-700">
-                    <Edit2 size={18} />
-                  </button>
-                  <button onClick={async () => { if(confirm('Hapus?')) await deleteDoc(doc(db, 'events_contests', item.id)); fetchData(); }} className="text-red-500 hover:text-red-700">
-                    <Trash2 size={18} />
-                  </button>
-                </td>
+      <div className="mb-4 flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 md:flex-row md:items-center md:justify-between">
+        <label className="flex flex-1 items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-500 shadow-sm">
+          <Search size={16} />
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Cari judul, deskripsi, atau tipe"
+            className="w-full bg-transparent outline-none placeholder:text-slate-400"
+          />
+        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="flex items-center gap-1 text-xs uppercase tracking-[0.35em] text-slate-500"><Filter size={13} /> Filter</span>
+          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none">
+            <option value="all">Semua tipe</option>
+            <option value="event">Event</option>
+            <option value="lomba">Lomba</option>
+          </select>
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm outline-none">
+            <option value="all">Semua status</option>
+            <option value="aktif">Aktif</option>
+            <option value="nonaktif">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+
+      {error && <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>}
+
+      {loading ? (
+        <div className="rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-500">Memuat data event & lomba…</div>
+      ) : pageItems.length === 0 ? (
+        <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center text-sm text-slate-500">Belum ada data yang cocok dengan pencarian atau filter saat ini.</div>
+      ) : (
+        <div className="overflow-x-auto rounded-3xl border border-slate-200">
+          <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+            <thead className="bg-emerald-50 text-emerald-900">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Judul</th>
+                <th className="px-4 py-3 font-semibold">Tipe</th>
+                <th className="px-4 py-3 font-semibold">Tanggal</th>
+                <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 text-right font-semibold">Aksi</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {pageItems.map((item) => (
+                <tr key={item.id} className="hover:bg-slate-50">
+                  <td className="px-4 py-3">
+                    <p className="font-semibold text-slate-900">{item.title}</p>
+                    <p className="text-xs text-slate-500">{item.description || 'Tidak ada deskripsi'}</p>
+                  </td>
+                  <td className="px-4 py-3 capitalize text-slate-600">{item.type}</td>
+                  <td className="px-4 py-3 text-slate-600">{item.date}</td>
+                  <td className="px-4 py-3">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${item.status === 'aktif' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      {item.status || 'aktif'}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <div className="flex justify-end gap-2">
+                      <button type="button" onClick={() => toggleStatus(item)} className="rounded-xl border border-slate-200 p-2 text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" title="Ubah status">
+                        {item.status === 'aktif' ? <Eye size={16} /> : <EyeOff size={16} />}
+                      </button>
+                      <button type="button" onClick={() => { setIsEditing(true); setFormData(item); }} className="rounded-xl border border-slate-200 p-2 text-blue-600 transition hover:bg-blue-50" title="Edit">
+                        <Edit2 size={16} />
+                      </button>
+                      <button type="button" onClick={() => handleDelete(item)} className="rounded-xl border border-slate-200 p-2 text-red-500 transition hover:bg-red-50" title="Hapus">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+        <p>Menampilkan {pageItems.length} dari {filteredItems.length} data</p>
+        <div className="flex items-center gap-2">
+          <button type="button" onClick={() => setPage((prev) => Math.max(1, prev - 1))} disabled={page === 1} className="rounded-xl border border-slate-200 bg-white px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">Sebelumnya</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              type="button"
+              onClick={() => setPage(num)}
+              className={`rounded-xl border px-3 py-2 ${page === num ? 'border-emerald-500 bg-emerald-600 text-white' : 'border-slate-200 bg-white text-slate-600'}`}
+            >
+              {num}
+            </button>
+          ))}
+          <button type="button" onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))} disabled={page === totalPages} className="rounded-xl border border-slate-200 bg-white px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">Berikutnya</button>
+        </div>
       </div>
     </div>
   );
