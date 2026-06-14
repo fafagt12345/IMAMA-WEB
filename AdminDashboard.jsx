@@ -2,16 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { db } from './config';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import {
-  Activity,
   Building2,
   CalendarDays,
   Clock3,
-  Crown,
-  Layers3,
   Sparkles,
   Trophy,
   Users2,
-  Zap,
 } from 'lucide-react';
 
 const formatDate = (value) => {
@@ -132,7 +128,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-1">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -156,45 +152,7 @@ const AdminDashboard = () => {
             ))}
           </div>
         </section>
-
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.35em] text-emerald-600">Status Sistem</p>
-              <h2 className="text-xl font-bold text-slate-900">Ringkasan cepat</h2>
-            </div>
-            <Activity className="text-emerald-600" size={18} />
-          </div>
-          <div className="space-y-3">
-            <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-              <p className="text-sm text-emerald-700">Database</p>
-              <p className="text-lg font-semibold text-emerald-950">Realtime Sync Aktif</p>
-            </div>
-            <div className="rounded-2xl border border-sky-100 bg-sky-50 p-4">
-              <p className="text-sm text-sky-700">Admin</p>
-              <p className="text-lg font-semibold text-sky-950">Akses aman & mudah dikelola</p>
-            </div>
-            <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
-              <p className="text-sm text-violet-700">Hero Banner</p>
-              <p className="text-lg font-semibold text-violet-950">Preview real-time & pengaturan lengkap</p>
-            </div>
-            <div className="rounded-2xl border border-amber-100 bg-amber-50 p-4">
-              <p className="text-sm text-amber-700">Event & Lomba</p>
-              <p className="text-lg font-semibold text-amber-950">Search, filter, dan status aktif/nonaktif</p>
-            </div>
-          </div>
-        </section>
       </div>
-
-      <section className="rounded-3xl border border-emerald-100 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-700 p-6 text-white shadow-xl">
-        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-emerald-100">Tips admin</p>
-            <h3 className="text-xl font-semibold">Dashboard yang lebih modern dan siap untuk monitoring konten</h3>
-          </div>
-          <div className="rounded-2xl bg-white/10 px-4 py-3 text-sm text-emerald-50">Gunakan menu di sisi kiri untuk mengelola event, hero, departemen, dan struktur organisasi.</div>
-        </div>
-      </section>
     </div>
   );
 };

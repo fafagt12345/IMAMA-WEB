@@ -9,6 +9,7 @@ import {
   LogOut,
   MoreHorizontal,
   ShieldCheck,
+  Phone,
 } from 'lucide-react';
 import { auth } from './config';
 import { signOut } from 'firebase/auth';
@@ -25,6 +26,7 @@ const AdminSidebar = ({ children }) => {
     { path: '/admin/hero', icon: <Image size={20} />, label: 'Hero Banner' },
     { path: '/admin/structure', icon: <Users size={20} />, label: 'Struktur' },
     { path: '/admin/departments', icon: <Settings size={20} />, label: 'Departemen' },
+    { path: '/admin/contact', icon: <Phone size={20} />, label: 'Kontak' },
   ];
 
   const handleLogout = async () => {
@@ -108,7 +110,7 @@ const AdminSidebar = ({ children }) => {
             <div className="mb-1 flex items-center gap-2 font-semibold text-emerald-50">
               <ShieldCheck size={14} /> Panel Admin
             </div>
-            <p className="leading-5">Akses aman untuk mengelola konten website IMAMA tanpa mengubah sistem login yang berjalan.</p>
+            <p className="leading-5">Kelola konten IMAMA dari satu tempat.</p>
           </div>
           <button
             type="button"
