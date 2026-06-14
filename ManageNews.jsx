@@ -25,7 +25,7 @@ const ManageNews = () => {
   const [currentImageUrl, setCurrentImageUrl] = useState('');
   const { deleteItem, loading: isDeleting } = useFirebaseDeletion('news');
 
-  const { data: newsList } = useFetch('news', 'createdAt');
+  const { data: newsList = [] } = useFetch('news', 'createdAt');
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext'; // Pastikan path ini benar
-import ProtectedRoute from './components/ProtectedRoute'; // Pastikan path ini benar
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import Home from './Home';
@@ -18,6 +18,7 @@ import ManageEvents from './ManageEvents';
 import ManageHero from './ManageHero';
 import ManageDepartments from './ManageDepartments';
 import ManageContact from './ManageContact';
+import ManageNews from './ManageNews';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/admin/hero" element={<ProtectedRoute><AdminSidebar><ManageHero /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/departments" element={<ProtectedRoute><AdminSidebar><ManageDepartments /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute><AdminSidebar><ManageContact /></AdminSidebar></ProtectedRoute>} />
+          <Route path="/admin/news" element={<ProtectedRoute><AdminSidebar><ManageNews /></AdminSidebar></ProtectedRoute>} />
         </Routes>
         <Footer />
       </Router>
