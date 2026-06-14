@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { db, auth } from './config';
-import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { Edit2, Image as ImageIcon, Plus, Trash2, X } from 'lucide-react';
 
 const FONT_OPTIONS = ['Poppins', 'Inter', 'Montserrat', 'Roboto', 'Open Sans', 'Playfair Display', 'Lora', 'Merriweather'];
@@ -45,6 +45,8 @@ const ManageHero = () => {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [textSettings, setTextSettings] = useState(DEFAULT_STYLE);
+  const [fontOptionsInput, setFontOptionsInput] = useState(FONT_OPTIONS.join(', '));
+  const [fontOptions, setFontOptions] = useState(FONT_OPTIONS);
 
   useEffect(() => {
     const q = query(collection(db, 'hero_slides'), orderBy('createdAt', 'desc'));
@@ -52,6 +54,29 @@ const ManageHero = () => {
       setSlides(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
     return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const snap = await getDoc(doc(db, 'settings', 'hero'));
+        if (snap.exists()) {
+          const data = snap.data();
+          const savedFonts = Array.isArray(data.fontOptions)
+            ? data.fontOptions
+            : typeof data.fontOptions === 'string'
+              ? data.fontOptions.split(',').map((item) => item.trim()).filter(Boolean)
+              : FONT_OPTIONS;
+          const normalized = savedFonts.length ? savedFonts : FONT_OPTIONS;
+          setFontOptions(normalized);
+          setFontOptionsInput(normalized.join(', '));
+        }
+      } catch (error) {
+        console.error('Gagal memuat daftar font hero:', error);
+      }
+    };
+
+    loadSettings();
   }, []);
 
   const previewStyle = {
@@ -96,6 +121,11 @@ const ManageHero = () => {
         imageUrl = data.secure_url;
       }
 
+      const fontList = fontOptionsInput
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean);
+
       const slideData = {
         title: title || '',
         subtitle: subtitle || '',
@@ -124,7 +154,10 @@ const ManageHero = () => {
         lastModifiedBy: auth.currentUser?.email || 'admin',
         title: title || '',
         subtitle: subtitle || '',
+        fontOptions: fontList.length ? fontList : FONT_OPTIONS,
       }, { merge: true });
+
+      setFontOptions(fontList.length ? fontList : FONT_OPTIONS);
 
       resetForm();
       alert(editingId ? 'Slide hero berhasil diperbarui.' : 'Slide hero berhasil ditambahkan.');
@@ -217,7 +250,7 @@ const ManageHero = () => {
               <label className="space-y-2 text-sm text-slate-600">
                 <span className="font-semibold text-slate-700">Font family</span>
                 <select value={textSettings.fontFamily} onChange={(e) => setTextSettings((prev) => ({ ...prev, fontFamily: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
-                  {FONT_OPTIONS.map((font) => <option key={font} value={font}>{font}</option>)}
+                  {fontOptions.map((font) => <option key={font} value={font}>{font}</option>)}
                 </select>
               </label>
               <label className="space-y-2 text-sm text-slate-600">
@@ -227,6 +260,17 @@ const ManageHero = () => {
                   <option value="italic">Italic</option>
                 </select>
               </label>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-emerald-100 bg-emerald-50 p-4 text-sm text-emerald-900">
+              <p className="font-semibold">Daftar font yang tersedia</p>
+              <p className="mt-1 text-xs text-emerald-800">Pisahkan dengan koma. Font ini akan muncul di pilihan font hero banner.</p>
+              <textarea
+                value={fontOptionsInput}
+                onChange={(e) => setFontOptionsInput(e.target.value)}
+                rows="3"
+                className="mt-3 w-full rounded-2xl border border-emerald-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              />
             </div>
 
             <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">

@@ -19,6 +19,9 @@ const ManageEvents = () => {
     description: '',
     date: '',
     status: 'aktif',
+    location: '',
+    imageUrl: '',
+    registrationUrl: '',
   });
 
   useEffect(() => {
@@ -66,6 +69,9 @@ const ManageEvents = () => {
         type: formData.type,
         description: formData.description.trim(),
         date: formData.date,
+        location: formData.location.trim(),
+        imageUrl: formData.imageUrl.trim(),
+        registrationUrl: formData.registrationUrl.trim(),
         status: formData.status || 'aktif',
         updatedAt: serverTimestamp(),
         updatedBy: auth.currentUser?.email || 'admin',
@@ -81,7 +87,7 @@ const ManageEvents = () => {
         });
       }
 
-      setFormData({ id: '', title: '', type: 'event', description: '', date: '', status: 'aktif' });
+      setFormData({ id: '', title: '', type: 'event', description: '', date: '', status: 'aktif', location: '', imageUrl: '', registrationUrl: '' });
       setIsEditing(false);
     } catch (err) {
       console.error('Error saving event:', err);
@@ -147,6 +153,27 @@ const ManageEvents = () => {
             value={formData.date}
             onChange={(e) => setFormData({ ...formData, date: e.target.value })}
             required
+          />
+          <input
+            type="text"
+            placeholder="Lokasi event / tempat lomba"
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            value={formData.location}
+            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          />
+          <input
+            type="url"
+            placeholder="URL gambar event (opsional)"
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            value={formData.imageUrl}
+            onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+          />
+          <input
+            type="url"
+            placeholder="Link pendaftaran / detail (opsional)"
+            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            value={formData.registrationUrl}
+            onChange={(e) => setFormData({ ...formData, registrationUrl: e.target.value })}
           />
           <textarea
             placeholder="Deskripsi singkat event atau lomba"

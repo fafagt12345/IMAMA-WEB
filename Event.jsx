@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { CalendarDays, MapPin, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { db } from './config';
 
 const Event = () => {
@@ -45,33 +46,45 @@ const Event = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {events.map((item) => (
-              <article key={item.id} className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-lg shadow-slate-100 transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-emerald-100/80">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.35em] text-emerald-600">{String(item.type || 'event').toUpperCase()}</p>
-                    <h2 className="mt-2 text-xl font-bold text-slate-900">{item.title}</h2>
-                  </div>
-                  <span className={`rounded-full px-3 py-1 text-xs font-semibold ${String(item.status || '').toLowerCase() === 'selesai' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}`}>
-                    {item.status || 'Aktif'}
-                  </span>
+              <article key={item.id} className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-lg shadow-slate-100 transition hover:-translate-y-1 hover:border-emerald-200 hover:shadow-emerald-100/80">
+                <div className="h-52 w-full bg-slate-100">
+                  {item.imageUrl ? (
+                    <img src={item.imageUrl} alt={item.title} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-emerald-100 to-white text-sm text-emerald-700">Tidak ada gambar</div>
+                  )}
                 </div>
-
-                <p className="mt-4 text-sm leading-6 text-slate-600">{item.description || 'Deskripsi agenda sedang disiapkan.'}</p>
-
-                <div className="mt-6 space-y-3 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <CalendarDays size={16} className="text-emerald-600" />
-                    <span>{item.date ? new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tanggal belum ditentukan'}</span>
+                <div className="p-6">
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.35em] text-emerald-600">{String(item.type || 'event').toUpperCase()}</p>
+                      <h2 className="mt-2 text-xl font-bold text-slate-900">{item.title}</h2>
+                    </div>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${String(item.status || '').toLowerCase() === 'selesai' ? 'bg-slate-100 text-slate-600' : 'bg-emerald-100 text-emerald-700'}`}>
+                      {item.status || 'Aktif'}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <MapPin size={16} className="text-emerald-600" />
-                    <span>{item.location || 'Lokasi akan diumumkan'}</span>
-                  </div>
-                </div>
 
-                <div className="mt-6 flex items-center gap-2 text-emerald-700">
-                  <Sparkles size={16} />
-                  <span className="text-xs font-semibold uppercase tracking-[0.35em]">IMAMA UNESA</span>
+                  <p className="mt-4 text-sm leading-6 text-slate-600">{item.description || 'Deskripsi agenda sedang disiapkan.'}</p>
+
+                  <div className="mt-6 space-y-3 text-sm text-slate-600">
+                    <div className="flex items-center gap-2">
+                      <CalendarDays size={16} className="text-emerald-600" />
+                      <span>{item.date ? new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Tanggal belum ditentukan'}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <MapPin size={16} className="text-emerald-600" />
+                      <span>{item.location || 'Lokasi akan diumumkan'}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 text-emerald-700">
+                      <Sparkles size={16} />
+                      <span className="text-xs font-semibold uppercase tracking-[0.35em]">IMAMA UNESA</span>
+                    </div>
+                    <Link to={`/events/${item.id}`} className="rounded-full bg-emerald-700 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-800">Lihat detail</Link>
+                  </div>
                 </div>
               </article>
             ))}

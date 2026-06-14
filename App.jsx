@@ -12,6 +12,7 @@ import About from './About';
 import Structure from './Structure';
 import Contact from './Contact';
 import Event from './Event';
+import EventDetail from './EventDetail';
 import AdminDashboard from './AdminDashboard';
 import AdminSidebar from './AdminSidebar';
 import ManageStructure from './ManageStructure';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/galeri" element={<Gallery />} />
           <Route path="/events" element={<Event />} />
+          <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/program-kerja" element={<Programs />} />
           <Route path="/tentang" element={<About />} /> {/* Tambahkan route untuk halaman Tentang */}
           <Route path="/struktur" element={<Structure />} />
