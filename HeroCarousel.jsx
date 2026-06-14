@@ -36,7 +36,7 @@ const HeroCarousel = () => {
   const subtitleFontSize = slideStyle.subtitleFontSize || Math.max(18, titleFontSize * 0.45);
 
   const titleStyle = {
-    fontFamily: slideStyle.fontFamily || 'Poppins',
+    fontFamily: slideStyle.titleFontFamily || slideStyle.fontFamily || 'Poppins',
     fontStyle: slideStyle.fontStyle || 'normal',
     fontSize: `${titleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '600',
@@ -47,7 +47,7 @@ const HeroCarousel = () => {
     textAlign: slideStyle.textAlign || 'left',
   };
   const subtitleStyle = {
-    fontFamily: slideStyle.fontFamily || 'Poppins',
+    fontFamily: slideStyle.subtitleFontFamily || slideStyle.fontFamily || 'Poppins',
     fontStyle: slideStyle.fontStyle || 'normal',
     fontSize: `${subtitleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '400',
