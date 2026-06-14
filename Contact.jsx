@@ -2,7 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, getDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { Phone, Instagram, Mail, MapPin, MessageCircle } from 'lucide-react';
+import { Phone, Instagram, Mail, MapPin } from 'lucide-react';
+
+const normalizeMapsUrl = (value) => {
+  if (!value) return '';
+
+  const trimmed = value.trim();
+
+  if (/google\.com\/maps\/embed/i.test(trimmed) || /output=embed/i.test(trimmed)) {
+    return trimmed;
+  }
+
+  if (/maps\.app\.goo\.gl\//i.test(trimmed) || /google\.com\/maps\/place\//i.test(trimmed) || /maps\.google\.com\/?\?q=/i.test(trimmed) || /google\.com\/maps\?q=/i.test(trimmed)) {
+    return `https://www.google.com/maps?q=${encodeURIComponent(trimmed)}&output=embed`;
+  }
+
+  return trimmed;
+};
 
 const Contact = () => {
   const [contact, setContact] = useState(null);
@@ -23,6 +39,8 @@ const Contact = () => {
   }, []);
 
   if (loading) return <div className="h-screen flex items-center justify-center">Memuat Kontak...</div>;
+
+  const mapsUrl = normalizeMapsUrl(contact?.mapsUrl || '');
 
   return (
     <div className="pt-24 pb-20 bg-white min-h-screen">
@@ -77,11 +95,19 @@ const Contact = () => {
           </motion.div>
 
           {/* Maps Embed */}
-          <motion.div initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="h-[450px] rounded-[2rem] overflow-hidden shadow-2xl border-8 border-white">
-            {contact?.mapsUrl ? (
-              <iframe src={contact.mapsUrl} width="100%" height="100%" style={{ border: 0 }} allowFullScreen="" loading="lazy"></iframe>
+          <motion.div initial={{ x: 30, opacity: 0 }} animate={{ x: 0, opacity: 1 }} className="relative min-h-[280px] h-[320px] w-full rounded-[2rem] border-8 border-white shadow-2xl md:h-[450px]">
+            {mapsUrl ? (
+              <iframe
+                src={mapsUrl}
+                title="Peta lokasi IMAMA UNESA"
+                className="h-full w-full rounded-[1.4rem]"
+                style={{ border: 0, display: 'block' }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             ) : (
-              <div className="w-full h-full bg-emerald-100 flex items-center justify-center italic text-emerald-900">Peta tidak tersedia</div>
+              <div className="flex h-full w-full items-center justify-center rounded-[1.4rem] bg-emerald-100 px-4 text-center italic text-emerald-900">Peta tidak tersedia. Pastikan link Google Maps yang disimpan adalah URL embed yang valid.</div>
             )}
           </motion.div>
         </div>

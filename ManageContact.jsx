@@ -53,7 +53,7 @@ const ManageContact = () => {
               className="w-full p-3 bg-gray-50 border rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none" 
               placeholder="Tempelkan link 'src' dari iframe Google Maps..." 
             />
-            <p className="text-[10px] text-gray-500 mt-1 italic">*Buka Google Maps &gt; Bagikan &gt; Sematkan Peta &gt; Ambil link di dalam tanda kutip src=&quot;...&quot;</p>
+            <p className="text-[10px] text-gray-500 mt-1 italic">*Gunakan link embed Google Maps yang valid. Jika peta tidak muncul di HP, pastikan Anda memakai URL embed (bukan link share biasa) agar iframe bisa tampil dengan baik.</p>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
             <div>

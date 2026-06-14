@@ -1,13 +1,27 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { db, auth } from './config';
+import { db, auth, storage } from './config';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Edit2, Eye, EyeOff, Filter, Plus, Search, Trash2 } from 'lucide-react';
+
+const getStoragePathFromUrl = (downloadUrl) => {
+  if (!downloadUrl) return '';
+  try {
+    const parsedUrl = new URL(downloadUrl);
+    const match = parsedUrl.pathname.match(/\/o\/(.+)$/);
+    return match ? decodeURIComponent(match[1]) : downloadUrl;
+  } catch {
+    return downloadUrl;
+  }
+};
 
 const ManageEvents = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [currentImageUrl, setCurrentImageUrl] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -61,16 +75,46 @@ const ManageEvents = () => {
     setPage(1);
   }, [searchTerm, typeFilter, statusFilter]);
 
+  const resetForm = () => {
+    setFormData({ id: '', title: '', type: 'event', description: '', date: '', status: 'aktif', location: '', imageUrl: '', registrationUrl: '' });
+    setIsEditing(false);
+    setImageFile(null);
+    setCurrentImageUrl('');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
+      if (imageFile && !imageFile.type.startsWith('image/')) {
+        setError('Harap unggah file gambar yang valid.');
+        return;
+      }
+
+      let imageUrl = currentImageUrl || formData.imageUrl || '';
+
+      if (imageFile) {
+        if (currentImageUrl || formData.imageUrl) {
+          try {
+            const oldRef = ref(storage, getStoragePathFromUrl(currentImageUrl || formData.imageUrl));
+            await deleteObject(oldRef);
+          } catch (cleanupErr) {
+            console.warn('Tidak ada file lama yang dihapus:', cleanupErr);
+          }
+        }
+
+        const storageRef = ref(storage, `events/${Date.now()}_${imageFile.name}`);
+        await uploadBytes(storageRef, imageFile);
+        imageUrl = await getDownloadURL(storageRef);
+      }
+
       const payload = {
         title: formData.title.trim(),
         type: formData.type,
         description: formData.description.trim(),
         date: formData.date,
         location: formData.location.trim(),
-        imageUrl: formData.imageUrl.trim(),
+        imageUrl: imageUrl.trim(),
         registrationUrl: formData.registrationUrl.trim(),
         status: formData.status || 'aktif',
         updatedAt: serverTimestamp(),
@@ -87,8 +131,8 @@ const ManageEvents = () => {
         });
       }
 
-      setFormData({ id: '', title: '', type: 'event', description: '', date: '', status: 'aktif', location: '', imageUrl: '', registrationUrl: '' });
-      setIsEditing(false);
+      resetForm();
+      setError('');
     } catch (err) {
       console.error('Error saving event:', err);
       setError('Gagal menyimpan data. Periksa koneksi database Anda.');
@@ -106,7 +150,22 @@ const ManageEvents = () => {
 
   const handleDelete = async (item) => {
     if (!window.confirm(`Hapus ${item.title}?`)) return;
-    await deleteDoc(doc(db, 'events_contests', item.id));
+
+    try {
+      if (item.imageUrl) {
+        const storageRef = ref(storage, getStoragePathFromUrl(item.imageUrl));
+        try {
+          await deleteObject(storageRef);
+        } catch (cleanupErr) {
+          console.warn('Gambar lama tidak dihapus dari storage:', cleanupErr);
+        }
+      }
+
+      await deleteDoc(doc(db, 'events_contests', item.id));
+    } catch (err) {
+      console.error('Error deleting event:', err);
+      setError('Gagal menghapus data event/lomba.');
+    }
   };
 
   return (
@@ -161,13 +220,19 @@ const ManageEvents = () => {
             value={formData.location}
             onChange={(e) => setFormData({ ...formData, location: e.target.value })}
           />
-          <input
-            type="url"
-            placeholder="URL gambar event (opsional)"
-            className="w-full rounded-2xl border border-slate-200 bg-white p-3 text-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            value={formData.imageUrl}
-            onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-          />
+          <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-3 text-sm text-slate-600">
+            <label className="block font-semibold text-slate-700">Unggah gambar event/lomba</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImageFile(e.target.files?.[0] || null)}
+              className="w-full text-sm text-slate-500 file:mr-3 file:rounded-full file:border-0 file:bg-emerald-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-emerald-700 hover:file:bg-emerald-100"
+            />
+            <p className="text-xs text-slate-500">Jika tidak memilih file baru, gambar yang sudah tersimpan akan tetap dipakai.</p>
+            {currentImageUrl && (
+              <p className="text-xs text-emerald-700">Gambar saat ini: {currentImageUrl}</p>
+            )}
+          </div>
           <input
             type="url"
             placeholder="Link pendaftaran / detail (opsional)"
@@ -251,7 +316,12 @@ const ManageEvents = () => {
                       <button type="button" onClick={() => toggleStatus(item)} className="rounded-xl border border-slate-200 p-2 text-slate-500 transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-700" title="Ubah status">
                         {item.status === 'aktif' ? <Eye size={16} /> : <EyeOff size={16} />}
                       </button>
-                      <button type="button" onClick={() => { setIsEditing(true); setFormData(item); }} className="rounded-xl border border-slate-200 p-2 text-blue-600 transition hover:bg-blue-50" title="Edit">
+                      <button type="button" onClick={() => {
+                        setIsEditing(true);
+                        setFormData(item);
+                        setCurrentImageUrl(item.imageUrl || '');
+                        setImageFile(null);
+                      }} className="rounded-xl border border-slate-200 p-2 text-blue-600 transition hover:bg-blue-50" title="Edit">
                         <Edit2 size={16} />
                       </button>
                       <button type="button" onClick={() => handleDelete(item)} className="rounded-xl border border-slate-200 p-2 text-red-500 transition hover:bg-red-50" title="Hapus">
