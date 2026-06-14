@@ -10,7 +10,7 @@ const ManageHero = () => {
   const [blurLevel, setBlurLevel] = useState(0);
   const [titleFont, setTitleFont] = useState('font-sans');
   const [titleItalic, setTitleItalic] = useState(false);
-  const [subtitleFont, setSubtitleFont] = useState('font-sans');
+  const [subtitleFont, setSubtitleFont] = useState('font-serif');
   const [subtitleItalic, setSubtitleItalic] = useState(false);
   const [photo, setPhoto] = useState(null);
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState('');
@@ -55,8 +55,8 @@ const ManageHero = () => {
         imageUrl: imageUrl || '', 
         titleFont: titleFont || 'font-sans',
         titleItalic: Boolean(titleItalic),
-        subtitleFont: subtitleFont || 'font-sans',
-        subtitleItalic: Boolean(subtitleItalic),
+        subtitleFont: subtitleFont || 'font-serif',
+        subtitleItalic: false, // Paksa false agar tidak miring
         updatedAt: serverTimestamp()
       };
 
@@ -90,7 +90,7 @@ const ManageHero = () => {
     setBlurLevel(slide.blurLevel);
     setTitleFont(slide.titleFont || 'font-sans');
     setTitleItalic(slide.titleItalic || false);
-    setSubtitleFont(slide.subtitleFont || 'font-sans');
+    setSubtitleFont(slide.subtitleFont || 'font-serif');
     setSubtitleItalic(!!slide.subtitleItalic); // Memastikan boolean murni
     setCurrentPhotoUrl(slide.imageUrl || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -99,7 +99,7 @@ const ManageHero = () => {
   const resetForm = () => {
     setTitle(''); setSubtitle(''); setBlurLevel(0); setPhoto(null);
     setTitleFont('font-sans'); setTitleItalic(false);
-    setSubtitleFont('font-sans'); setSubtitleItalic(false);
+    setSubtitleFont('font-serif'); setSubtitleItalic(false);
     setEditingId(null); setCurrentPhotoUrl('');
   };
 
@@ -156,7 +156,7 @@ const ManageHero = () => {
                 placeholder="Sub-judul"
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-sans'} ${subtitleItalic === true ? 'italic' : 'not-italic'}`}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-serif'} not-italic`}
                 required
               />
               <div className="flex gap-2">
@@ -169,13 +169,6 @@ const ManageHero = () => {
                   <option value="font-serif">Serif (Klasik)</option>
                   <option value="font-mono">Mono (Kode)</option>
                 </select>
-                <button 
-                  type="button"
-                  onClick={() => setSubtitleItalic(!subtitleItalic)}
-                  className={`text-xs px-3 py-2 rounded-lg border transition-colors ${subtitleItalic ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-white text-gray-500'}`}
-                >
-                  <i>I</i> Miring
-                </button>
               </div>
             </div>
           </div>
@@ -214,7 +207,7 @@ const ManageHero = () => {
               </div>
               <div className="p-4">
                 <h3 className={`font-bold text-emerald-900 ${slide.titleFont} ${slide.titleItalic ? 'italic' : ''}`}>{slide.title}</h3>
-                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-sans'} ${slide.subtitleItalic === true ? 'italic' : 'not-italic'}`}>{slide.subtitle}</p>
+                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-serif'} not-italic`}>{slide.subtitle}</p>
                 <div className="mt-2 text-[10px] text-gray-400 uppercase tracking-widest">Blur: {slide.blurLevel}</div>
               </div>
             </div>

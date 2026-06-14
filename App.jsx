@@ -1,25 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './AuthContext';
-import ProtectedRoute from './ProtectedRoute';
-import Home from './Home';
-import Login from './Login';
-import AdminDashboard from './AdminDashboard';
-import ManageStructure from './ManageStructure';
-import ManageDepartments from './ManageDepartments';
-import Structure from './Structure';
-import Navbar from './Navbar';
-import Gallery from './Gallery';
-import ManageGallery from './ManageGallery';
-import Programs from './Programs';
-import ManagePrograms from './ManagePrograms';
-import ManageAbout from './ManageAbout';
-import ManageHero from './ManageHero'; // Pastikan nama file di folder juga ManageHero.jsx
-import ManageHistory from './ManageHistory'; // Tambahkan baris ini
-import ManagePhilosophy from './ManagePhilosophy'; // Tambahkan baris ini
-import Contact from './Contact';
-import About from './About'; // Pastikan About diimport
 import ManageContact from './ManageContact';
 import Footer from './Footer';
+import ManageEvents from './ManageEvents';
+import ManageHero from './ManageHero';
+import AdminDashboard from './AdminDashboard';
+import AdminSidebar from './AdminSidebar';
 
 function App() {
   return (
@@ -46,19 +30,9 @@ function App() {
               <ManageStructure />
             </ProtectedRoute>
           } />
-          <Route path="/admin/departments" element={
+          <Route path="/admin/events" element={
             <ProtectedRoute>
-              <ManageDepartments />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/gallery" element={
-            <ProtectedRoute>
-              <ManageGallery />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/philosophy" element={
-            <ProtectedRoute>
-              <ManagePhilosophy />
+              <ManageEvents />
             </ProtectedRoute>
           } />
           <Route path="/admin/hero" element={
@@ -66,31 +40,5 @@ function App() {
               <ManageHero />
             </ProtectedRoute>
           } />
-          <Route path="/admin/about" element={
+          <Route path="/admin/departments" element={
             <ProtectedRoute>
-              <ManageAbout />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/history" element={
-            <ProtectedRoute>
-              <ManageHistory />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/programs" element={
-            <ProtectedRoute>
-              <ManagePrograms />
-            </ProtectedRoute>
-          } />
-          <Route path="/admin/contact" element={
-            <ProtectedRoute>
-              <ManageContact />
-            </ProtectedRoute>
-          } />
-        </Routes>
-        <Footer />
-      </Router>
-    </AuthProvider>
-  );
-}
-
-export default App;

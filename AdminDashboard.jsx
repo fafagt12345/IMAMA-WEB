@@ -1,104 +1,74 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Users, LayoutGrid, Image as ImageIcon, Briefcase, Phone, BookOpen, Lightbulb } from 'lucide-react';
-import { useFetch } from './hooks/useFetch';
+import React, { useState, useEffect } from 'react';
+import { db } from './config';
+import { collection, query, orderBy, limit, getDocs, doc, getDoc } from 'firebase/firestore';
+import { FiClock, FiActivity, FiTag, FiZap } from 'react-icons/fi';
 
 const AdminDashboard = () => {
-  const { data: members = [] } = useFetch('members');
-  const { data: departments = [] } = useFetch('departments');
-  const { data: slides = [] } = useFetch('hero_slides');
-  const { data: gallery = [] } = useFetch('gallery');
+  const [activities, setActivities] = useState({
+    events: [],
+    lastHero: null,
+    stats: { totalEvents: 0, totalNews: 0 }
+  });
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    { label: 'Total Pengurus', count: members.length, icon: <Users /> },
-    { label: 'Departemen', count: departments.length, icon: <LayoutGrid /> },
-    { label: 'Hero Slides', count: slides.length, icon: <ImageIcon /> },
-    { label: 'Galeri', count: gallery.length, icon: <ImageIcon /> },
-  ];
+  useEffect(() => {
+    const fetchSummary = async () => {
+      // Ambil Event terakhir
+      const eventQ = query(collection(db, 'events_contests'), orderBy('createdAt', 'desc'), limit(3));
+      const eventSnap = await getDocs(eventQ);
+      
+      // Ambil metadata Hero
+      const heroSnap = await getDoc(doc(db, 'settings', 'hero'));
+      
+      setActivities({
+        events: eventSnap.docs.map(d => d.data()),
+        lastHero: heroSnap.exists() ? heroSnap.data().lastModified : null,
+        stats: { totalEvents: eventSnap.size }
+      });
+      setLoading(false);
+    };
+    fetchSummary();
+  }, []);
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen pt-24">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {stats.map((stat, i) => (
-          <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className="p-3 bg-emerald-100 text-emerald-700 rounded-xl">
-              {React.cloneElement(stat.icon, { size: 24 })}
-            </div>
-            <div>
-              <p className="text-sm text-gray-500 font-medium">{stat.label}</p>
-              <p className="text-2xl font-bold text-gray-900">{stat.count}</p>
-            </div>
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-emerald-900">Ringkasan Aktivitas</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
+          <div className="flex items-center gap-4 text-emerald-600 mb-2">
+            <FiZap size={24} /> <span className="font-semibold uppercase text-sm">Hero Banner</span>
           </div>
-        ))}
+          <p className="text-gray-500 text-sm">Terakhir diupdate:</p>
+          <p className="font-bold">{activities.lastHero ? new Date(activities.lastHero).toLocaleString() : 'Belum ada data'}</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
+          <div className="flex items-center gap-4 text-blue-600 mb-2">
+            <FiTag size={24} /> <span className="font-semibold uppercase text-sm">Event Terbaru</span>
+          </div>
+          <ul className="text-sm space-y-1">
+            {activities.events.map((ev, i) => (
+              <li key={i} className="truncate">• {ev.title}</li>
+            ))}
+            {activities.events.length === 0 && <li className="text-gray-400 italic">Belum ada event</li>}
+          </ul>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
+          <div className="flex items-center gap-4 text-purple-600 mb-2">
+            <FiActivity size={24} /> <span className="font-semibold uppercase text-sm">Sistem</span>
+          </div>
+          <div className="text-sm">
+            <p>Database: <span className="text-green-600 font-bold">Online</span></p>
+            <p>Auth: <span className="text-green-600 font-bold">Google & Email</span></p>
+          </div>
+        </div>
       </div>
 
-      <h3 className="text-xl font-bold mb-6 text-emerald-800 uppercase tracking-wider">Manajemen Konten</h3>
-      <p className="text-gray-700 mb-6">Selamat datang di dashboard admin IMAMA UNESA. Pilih menu di bawah untuk mengelola konten website Anda.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link to="/admin/structure" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <Users /> Kelola Pengurus
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur departemen dan data anggota aktif.</p>
-        </Link>
-
-        <Link to="/admin/departments" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <LayoutGrid /> Kelola Departemen
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur nama-nama departemen organisasi.</p>
-        </Link>
-
-        <Link to="/admin/about" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <LayoutGrid /> Kelola Visi & Misi
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Ubah konten visi dan misi pada halaman Tentang Kami.</p>
-        </Link>
-
-        <Link to="/admin/history" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <BookOpen /> Kelola Sejarah & Profil
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur sejarah dan logo organisasi.</p>
-        </Link>
-
-        <Link to="/admin/philosophy" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <Lightbulb /> Kelola Filosofi Logo
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur makna dan filosofi di balik logo organisasi.</p>
-        </Link>
-
-        <Link to="/admin/hero" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <ImageIcon /> Kelola Hero Banner
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur gambar dan teks promosi di halaman depan.</p>
-        </Link>
-
-        <Link to="/admin/gallery" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <ImageIcon /> Kelola Galeri
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Unggah dokumentasi kegiatan IMAMA.</p>
-        </Link>
-      </div>
-
-      <h3 className="text-xl font-bold mb-6 text-emerald-800 uppercase tracking-wider mt-12">Manajemen Lainnya</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Link to="/admin/programs" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <Briefcase /> Kelola Program Kerja
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Atur daftar program kerja organisasi.</p>
-        </Link>
-        <Link to="/admin/contact" className="group p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-xl hover:border-emerald-200 transition-all duration-300">
-          <div className="flex items-center gap-4 text-emerald-700 font-bold text-lg">
-            <Phone /> Kelola Kontak
-          </div>
-          <p className="text-gray-500 text-xs mt-2 italic">Ubah informasi kontak organisasi.</p>
-        </Link>
+      <div className="bg-emerald-50 p-6 rounded-xl text-emerald-800 border border-emerald-100">
+        <h3 className="font-bold mb-2 flex items-center gap-2"><FiClock /> Petunjuk Admin</h3>
+        <p className="text-sm">Gunakan menu di sebelah kiri untuk mengelola konten website. Perubahan pada Hero Banner akan langsung berdampak pada halaman utama pengunjung.</p>
       </div>
     </div>
   );
