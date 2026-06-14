@@ -1,19 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { db, auth, storage } from './config';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { Edit2, Eye, EyeOff, Filter, Plus, Search, Trash2 } from 'lucide-react';
-
-const getStoragePathFromUrl = (downloadUrl) => {
-  if (!downloadUrl) return '';
-  try {
-    const parsedUrl = new URL(downloadUrl);
-    const match = parsedUrl.pathname.match(/\/o\/(.+)$/);
-    return match ? decodeURIComponent(match[1]) : downloadUrl;
-  } catch {
-    return downloadUrl;
-  }
-};
 
 const compressImage = (file) => new Promise((resolve, reject) => {
   if (!file || !file.type.startsWith('image/')) {
@@ -39,6 +27,10 @@ const compressImage = (file) => new Promise((resolve, reject) => {
       canvas.height = Math.round(height);
 
       const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Gagal menginisialisasi canvas context.'));
+        return;
+      }
       ctx.drawImage(img, 0, 0, width, height);
 
       const quality = file.size > 900000 ? 0.72 : 0.85;
@@ -48,14 +40,15 @@ const compressImage = (file) => new Promise((resolve, reject) => {
             reject(new Error('Gagal memproses gambar.'));
             return;
           }
-
           resolve(new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }));
         },
         'image/jpeg',
         quality
       );
     };
-    img.onerror = () => reject(new Error('Gagal membaca gambar.'));
+    img.onerror = () => reject(new Error('Gagal memproses file gambar. Pastikan file tidak korup.'));
+    // Tambahkan crossOrigin jika gambar berasal dari URL luar (meskipun di sini biasanya file lokal)
+    img.crossOrigin = "anonymous"; 
     img.src = reader.result;
   };
 
@@ -152,31 +145,33 @@ const ManageEvents = () => {
       setError('');
 
       if (imageFile && !imageFile.type.startsWith('image/')) {
-        setError('Harap unggah file gambar yang valid.');
-        return;
+        throw new Error('Harap unggah file gambar yang valid.');
       }
 
-      let imageUrl = currentImageUrl || formData.imageUrl || '';
-      let imageToUpload = imageFile ? await compressImage(imageFile) : null;
+      let finalImageUrl = currentImageUrl || formData.imageUrl || '';
 
-      if (imageToUpload) {
-        if (currentImageUrl || formData.imageUrl) {
-          try {
-            const oldRef = ref(storage, getStoragePathFromUrl(currentImageUrl || formData.imageUrl));
-            await deleteObject(oldRef);
-          } catch (cleanupErr) {
-            console.warn('Tidak ada file lama yang dihapus:', cleanupErr);
-          }
+      if (imageFile) {
+        const imageToUpload = await compressImage(imageFile);
+        
+        const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        if (!CLOUD_NAME || !UPLOAD_PRESET) {
+          throw new Error('Konfigurasi Cloudinary belum diatur di file .env');
         }
 
-        try {
-          const storageRef = ref(storage, `events/${Date.now()}_${imageToUpload.name}`);
-          await uploadBytes(storageRef, imageToUpload);
-          imageUrl = await getDownloadURL(storageRef);
-        } catch (uploadErr) {
-          console.warn('Upload gambar event gagal, lanjutkan dengan data yang ada:', uploadErr);
-          imageUrl = currentImageUrl || formData.imageUrl || '';
-        }
+        const cloudFormData = new FormData();
+        cloudFormData.append('file', imageToUpload);
+        cloudFormData.append('upload_preset', UPLOAD_PRESET);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: cloudFormData,
+        });
+
+        if (!res.ok) throw new Error('Gagal mengunggah gambar ke Cloudinary');
+        const cloudData = await res.json();
+        finalImageUrl = cloudData.secure_url;
       }
 
       const registrationUrl = normalizeLink(formData.registrationUrl);
@@ -187,7 +182,7 @@ const ManageEvents = () => {
         description: formData.description.trim(),
         date: formData.date,
         location: formData.location.trim(),
-        imageUrl: imageUrl.trim(),
+        imageUrl: finalImageUrl.trim(),
         registrationUrl,
         status: formData.status || 'aktif',
         updatedAt: serverTimestamp(),
@@ -202,13 +197,14 @@ const ManageEvents = () => {
           createdAt: serverTimestamp(),
           createdBy: auth.currentUser?.email || 'admin',
         });
+        alert("Data berhasil ditambahkan!");
       }
 
       resetForm();
-      setError('');
     } catch (err) {
       console.error('Error saving event:', err);
-      setError('Gagal menyimpan data. Periksa koneksi database Anda.');
+      setError(err.message || 'Gagal menyimpan data. Periksa koneksi internet Anda.');
+      alert("Terjadi Kesalahan: " + (err.message || "Gagal menyimpan data."));
     } finally {
       setSubmitting(false);
     }
@@ -227,16 +223,8 @@ const ManageEvents = () => {
     if (!window.confirm(`Hapus ${item.title}?`)) return;
 
     try {
-      if (item.imageUrl) {
-        const storageRef = ref(storage, getStoragePathFromUrl(item.imageUrl));
-        try {
-          await deleteObject(storageRef);
-        } catch (cleanupErr) {
-          console.warn('Gambar lama tidak dihapus dari storage:', cleanupErr);
-        }
-      }
-
       await deleteDoc(doc(db, 'events_contests', item.id));
+      alert("Data berhasil dihapus!");
     } catch (err) {
       console.error('Error deleting event:', err);
       setError('Gagal menghapus data event/lomba.');
