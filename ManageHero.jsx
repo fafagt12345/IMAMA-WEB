@@ -275,7 +275,7 @@ const ManageHero = () => {
 
             <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Ukuran teks</span>
+                <span className="font-semibold text-slate-700">Ukuran teks (judul & subjudul)</span>
                 <input type="number" min="16" max="96" value={textSettings.fontSize} onChange={(e) => setTextSettings((prev) => ({ ...prev, fontSize: Number(e.target.value) || 24 }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
               </label>
               <label className="space-y-2 text-sm text-slate-600">

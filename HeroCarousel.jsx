@@ -46,7 +46,7 @@ const HeroCarousel = () => {
   const subtitleStyle = {
     fontFamily: slideStyle.fontFamily || 'Poppins',
     fontStyle: slideStyle.fontStyle || 'normal',
-    fontSize: `${Math.max(16, (slideStyle.fontSize || 54) - 8)}px`,
+    fontSize: `${Math.max(18, (slideStyle.fontSize || 54) * 0.45)}px`,
     fontWeight: slideStyle.fontWeight || '400',
     letterSpacing: slideStyle.letterSpacing || '0px',
     lineHeight: slideStyle.lineHeight || 1.4,

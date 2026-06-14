@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { auth } from './config';
 import { signOut } from 'firebase/auth';
-import { MoreHorizontal, X, User, LogOut } from 'lucide-react';
+import { Menu, X, User, LogOut } from 'lucide-react';
 
 const NAV_LINKS = [
   { name: 'Beranda', path: '/' },
@@ -45,37 +45,20 @@ const Navbar = () => {
           IMAMA UNESA
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.path}
-              to={link.path}
-              className={`text-sm font-semibold transition-colors hover:text-emerald-500 ${location.pathname === link.path ? 'text-emerald-600' : isScrolled ? 'text-slate-700' : 'text-white'}`}
-            >
-              {link.name}
-            </Link>
-          ))}
-          {user && (
-            <Link to="/admin/dashboard" className="rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-sm hover:bg-emerald-100">
-              <span className="inline-flex items-center gap-1"><User size={16} /> Admin</span>
-            </Link>
-          )}
-        </div>
-
         <button
           type="button"
           onClick={() => setIsOpen(true)}
           aria-label="Buka menu utama"
           className={`inline-flex h-11 w-11 items-center justify-center rounded-full border transition ${isScrolled || isOpen ? 'border-emerald-100 bg-white text-emerald-900 shadow-md' : 'border-white/30 bg-white/10 text-white shadow-lg backdrop-blur-md'}`}
         >
-          <MoreHorizontal size={20} />
+          <Menu size={18} />
         </button>
       </div>
 
       {isOpen && (
         <>
           <button type="button" aria-label="Tutup menu" className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
-          <aside className="fixed right-0 top-0 z-50 flex h-full w-80 max-w-[88vw] flex-col border-l border-slate-200 bg-white shadow-2xl">
+          <aside className="fixed inset-x-4 top-4 z-50 flex max-h-[92vh] flex-col overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-2xl md:left-auto md:right-6 md:top-5 md:w-[380px]">
             <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.35em] text-emerald-600">Menu utama</p>
