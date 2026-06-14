@@ -9,6 +9,7 @@ const NAV_LINKS = [
   { name: 'Beranda', path: '/' },
   { name: 'Tentang', path: '/tentang' },
   { name: 'Struktur', path: '/struktur' },
+  { name: 'Event', path: '/events' },
   { name: 'Program', path: '/program-kerja' },
   { name: 'Galeri', path: '/galeri' },
   { name: 'Kontak', path: '/kontak' },

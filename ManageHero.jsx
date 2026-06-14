@@ -231,52 +231,23 @@ const ManageHero = () => {
 
             <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Font size</span>
+                <span className="font-semibold text-slate-700">Ukuran teks</span>
                 <input type="number" min="16" max="96" value={textSettings.fontSize} onChange={(e) => setTextSettings((prev) => ({ ...prev, fontSize: Number(e.target.value) || 24 }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
               </label>
               <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Font weight</span>
+                <span className="font-semibold text-slate-700">Ketebalan</span>
                 <select value={textSettings.fontWeight} onChange={(e) => setTextSettings((prev) => ({ ...prev, fontWeight: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
                   {WEIGHT_OPTIONS.map((weight) => <option key={weight} value={weight}>{weight === '300' ? 'Light' : weight === '400' ? 'Regular' : weight === '500' ? 'Medium' : weight === '600' ? 'Semi Bold' : 'Bold'}</option>)}
                 </select>
-              </label>
-              <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Letter spacing</span>
-                <input type="text" value={textSettings.letterSpacing} onChange={(e) => setTextSettings((prev) => ({ ...prev, letterSpacing: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
-              </label>
-              <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Line height</span>
-                <input type="number" step="0.1" min="1" max="2.5" value={textSettings.lineHeight} onChange={(e) => setTextSettings((prev) => ({ ...prev, lineHeight: Number(e.target.value) || 1.2 }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
               </label>
               <label className="space-y-2 text-sm text-slate-600">
                 <span className="font-semibold text-slate-700">Warna teks</span>
                 <input type="color" value={textSettings.textColor} onChange={(e) => setTextSettings((prev) => ({ ...prev, textColor: e.target.value }))} className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 p-1 outline-none" />
               </label>
               <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Warna background teks</span>
-                <input type="color" value={textSettings.textBgColor} onChange={(e) => setTextSettings((prev) => ({ ...prev, textBgColor: e.target.value }))} className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 p-1 outline-none" />
-              </label>
-            </div>
-
-            <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-              <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Opacity background</span>
-                <input type="range" min="0" max="100" value={textSettings.bgOpacity} onChange={(e) => setTextSettings((prev) => ({ ...prev, bgOpacity: Number(e.target.value) }))} className="w-full accent-emerald-600" />
-              </label>
-              <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Shadow teks</span>
-                <input type="text" value={textSettings.textShadow} onChange={(e) => setTextSettings((prev) => ({ ...prev, textShadow: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
-              </label>
-              <label className="space-y-2 text-sm text-slate-600">
                 <span className="font-semibold text-slate-700">Posisi teks</span>
                 <select value={textSettings.textAlign} onChange={(e) => setTextSettings((prev) => ({ ...prev, textAlign: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
                   {ALIGN_OPTIONS.map((align) => <option key={align} value={align}>{align.charAt(0).toUpperCase() + align.slice(1)}</option>)}
-                </select>
-              </label>
-              <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Animasi</span>
-                <select value={textSettings.animation} onChange={(e) => setTextSettings((prev) => ({ ...prev, animation: e.target.value }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100">
-                  {ANIMATION_OPTIONS.map((anim) => <option key={anim} value={anim}>{anim === 'none' ? 'None' : anim === 'fadeIn' ? 'Fade In' : anim === 'slideUp' ? 'Slide Up' : anim === 'slideLeft' ? 'Slide Left' : 'Zoom In'}</option>)}
                 </select>
               </label>
             </div>
@@ -321,9 +292,9 @@ const ManageHero = () => {
               <ul className="mt-2 space-y-1 text-xs text-slate-500">
                 <li>Font: {textSettings.fontFamily}</li>
                 <li>Style: {textSettings.fontStyle}</li>
-                <li>Weight: {textSettings.fontWeight}</li>
+                <li>Ukuran: {textSettings.fontSize}px</li>
+                <li>Ketebalan: {textSettings.fontWeight}</li>
                 <li>Posisi: {textSettings.textAlign}</li>
-                <li>Animasi: {textSettings.animation}</li>
               </ul>
             </div>
           </aside>
