@@ -32,10 +32,13 @@ const HeroCarousel = () => {
   const activeSlide = slides[currentIndex] || {};
   const slideStyle = activeSlide.textSettings || {};
   const imageSrc = activeSlide.imageUrl || activeSlide.url || activeSlide.image || '';
+  const titleFontSize = slideStyle.titleFontSize || slideStyle.fontSize || 54;
+  const subtitleFontSize = slideStyle.subtitleFontSize || Math.max(18, titleFontSize * 0.45);
+
   const titleStyle = {
     fontFamily: slideStyle.fontFamily || 'Poppins',
     fontStyle: slideStyle.fontStyle || 'normal',
-    fontSize: `${slideStyle.fontSize || 54}px`,
+    fontSize: `${titleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '600',
     letterSpacing: slideStyle.letterSpacing || '0px',
     lineHeight: slideStyle.lineHeight || 1.2,
@@ -46,7 +49,7 @@ const HeroCarousel = () => {
   const subtitleStyle = {
     fontFamily: slideStyle.fontFamily || 'Poppins',
     fontStyle: slideStyle.fontStyle || 'normal',
-    fontSize: `${Math.max(18, (slideStyle.fontSize || 54) * 0.45)}px`,
+    fontSize: `${subtitleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '400',
     letterSpacing: slideStyle.letterSpacing || '0px',
     lineHeight: slideStyle.lineHeight || 1.4,

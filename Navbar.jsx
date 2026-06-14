@@ -100,7 +100,7 @@ const Navbar = () => {
             <div className="border-t border-slate-100 p-5">
               {!user ? (
                 <Link to="/login" onClick={() => setIsOpen(false)} className="block rounded-2xl bg-emerald-700 px-4 py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-100 hover:bg-emerald-800">
-                  Login Admin
+                  Login
                 </Link>
               ) : (
                 <Link to="/admin/dashboard" onClick={() => setIsOpen(false)} className="block rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center text-sm font-semibold text-emerald-700 hover:bg-emerald-100">

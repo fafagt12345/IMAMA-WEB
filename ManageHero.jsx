@@ -12,6 +12,8 @@ const DEFAULT_STYLE = {
   fontFamily: 'Poppins',
   fontStyle: 'normal',
   fontSize: 54,
+  titleFontSize: 54,
+  subtitleFontSize: 24,
   fontWeight: '600',
   letterSpacing: '0px',
   lineHeight: 1.2,
@@ -79,13 +81,26 @@ const ManageHero = () => {
     loadSettings();
   }, []);
 
-  const previewStyle = {
+  const previewTitleStyle = {
     fontFamily: textSettings.fontFamily,
     fontStyle: textSettings.fontStyle,
-    fontSize: `${textSettings.fontSize}px`,
+    fontSize: `${textSettings.titleFontSize || textSettings.fontSize || DEFAULT_STYLE.titleFontSize}px`,
     fontWeight: textSettings.fontWeight,
     letterSpacing: textSettings.letterSpacing,
     lineHeight: textSettings.lineHeight,
+    color: textSettings.textColor,
+    textAlign: textSettings.textAlign,
+    textShadow: textSettings.textShadow,
+    animation: textSettings.animation === 'none' ? 'none' : `${textSettings.animation === 'fadeIn' ? 'fadeIn' : textSettings.animation === 'slideUp' ? 'slideUp' : textSettings.animation === 'slideLeft' ? 'slideLeft' : 'zoomIn'} 700ms ease-out`,
+  };
+
+  const previewSubtitleStyle = {
+    fontFamily: textSettings.fontFamily,
+    fontStyle: textSettings.fontStyle,
+    fontSize: `${textSettings.subtitleFontSize || Math.max(18, ((textSettings.titleFontSize || textSettings.fontSize || DEFAULT_STYLE.titleFontSize) * 0.45))}px`,
+    fontWeight: '400',
+    letterSpacing: textSettings.letterSpacing,
+    lineHeight: 1.4,
     color: textSettings.textColor,
     textAlign: textSettings.textAlign,
     textShadow: textSettings.textShadow,
@@ -187,6 +202,8 @@ const ManageHero = () => {
     setTextSettings({
       ...DEFAULT_STYLE,
       ...(slide.textSettings || {}),
+      titleFontSize: slide.textSettings?.titleFontSize || slide.textSettings?.fontSize || DEFAULT_STYLE.titleFontSize,
+      subtitleFontSize: slide.textSettings?.subtitleFontSize || Math.max(18, ((slide.textSettings?.titleFontSize || slide.textSettings?.fontSize || DEFAULT_STYLE.titleFontSize) * 0.45)),
       fontWeight: slide.textSettings?.fontWeight || DEFAULT_STYLE.fontWeight,
       textAlign: slide.textSettings?.textAlign || DEFAULT_STYLE.textAlign,
       animation: slide.textSettings?.animation || DEFAULT_STYLE.animation,
@@ -275,8 +292,39 @@ const ManageHero = () => {
 
             <div className="mt-6 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               <label className="space-y-2 text-sm text-slate-600">
-                <span className="font-semibold text-slate-700">Ukuran teks (judul & subjudul)</span>
-                <input type="number" min="16" max="96" value={textSettings.fontSize} onChange={(e) => setTextSettings((prev) => ({ ...prev, fontSize: Number(e.target.value) || 24 }))} className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100" />
+                <span className="font-semibold text-slate-700">Ukuran judul</span>
+                <input
+                  type="number"
+                  min="18"
+                  max="96"
+                  value={textSettings.titleFontSize || textSettings.fontSize || DEFAULT_STYLE.titleFontSize}
+                  onChange={(e) => {
+                    const nextSize = Number(e.target.value) || DEFAULT_STYLE.titleFontSize;
+                    setTextSettings((prev) => ({
+                      ...prev,
+                      titleFontSize: nextSize,
+                      fontSize: nextSize,
+                    }));
+                  }}
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
+              </label>
+              <label className="space-y-2 text-sm text-slate-600">
+                <span className="font-semibold text-slate-700">Ukuran subjudul</span>
+                <input
+                  type="number"
+                  min="14"
+                  max="60"
+                  value={textSettings.subtitleFontSize || Math.max(18, ((textSettings.titleFontSize || textSettings.fontSize || DEFAULT_STYLE.titleFontSize) * 0.45))}
+                  onChange={(e) => {
+                    const nextSize = Number(e.target.value) || 18;
+                    setTextSettings((prev) => ({
+                      ...prev,
+                      subtitleFontSize: nextSize,
+                    }));
+                  }}
+                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-3 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                />
               </label>
               <label className="space-y-2 text-sm text-slate-600">
                 <span className="font-semibold text-slate-700">Ketebalan</span>
@@ -324,8 +372,8 @@ const ManageHero = () => {
                 <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.35), ${previewBg})` }} />
                 <div className="absolute inset-0 flex items-end p-4" style={{ textAlign: textSettings.textAlign }}>
                   <div className="w-full rounded-3xl border border-white/10 p-4" style={{ backgroundColor: previewBg }}>
-                    <p style={previewStyle}>{title || 'Judul hero contoh'}</p>
-                    <p style={{ ...previewStyle, fontSize: `${Math.max(16, textSettings.fontSize - 8)}px`, fontWeight: '400', lineHeight: 1.4, marginTop: '0.35rem' }}>{subtitle || 'Subjudul hero contoh'}</p>
+                    <p style={previewTitleStyle}>{title || 'Judul hero contoh'}</p>
+                    <p style={{ ...previewSubtitleStyle, marginTop: '0.35rem' }}>{subtitle || 'Subjudul hero contoh'}</p>
                   </div>
                 </div>
               </div>
@@ -362,8 +410,8 @@ const ManageHero = () => {
                     <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, rgba(0,0,0,0.35), ${slideBg})` }} />
                     <div className="absolute inset-0 flex items-end p-3" style={{ textAlign: slideStyle.textAlign || 'left' }}>
                       <div className="w-full rounded-2xl border border-white/10 p-3" style={{ backgroundColor: slideBg }}>
-                        <p style={{ fontFamily: slideStyle.fontFamily || 'Poppins', fontStyle: slideStyle.fontStyle || 'normal', fontSize: `${slideStyle.fontSize || 54}px`, fontWeight: slideStyle.fontWeight || '600', letterSpacing: slideStyle.letterSpacing || '0px', lineHeight: slideStyle.lineHeight || 1.2, color: slideStyle.textColor || '#FFFFFF', textShadow: slideStyle.textShadow || '0 4px 18px rgba(0,0,0,0.35)', textAlign: slideStyle.textAlign || 'left' }}>{slide.title}</p>
-                        <p style={{ fontFamily: slideStyle.fontFamily || 'Poppins', fontStyle: slideStyle.fontStyle || 'normal', fontSize: `${Math.max(14, (slideStyle.fontSize || 54) - 8)}px`, fontWeight: '400', lineHeight: 1.3, color: slideStyle.textColor || '#FFFFFF' }}>{slide.subtitle}</p>
+                        <p style={{ fontFamily: slideStyle.fontFamily || 'Poppins', fontStyle: slideStyle.fontStyle || 'normal', fontSize: `${slideStyle.titleFontSize || slideStyle.fontSize || DEFAULT_STYLE.titleFontSize}px`, fontWeight: slideStyle.fontWeight || '600', letterSpacing: slideStyle.letterSpacing || '0px', lineHeight: slideStyle.lineHeight || 1.2, color: slideStyle.textColor || '#FFFFFF', textShadow: slideStyle.textShadow || '0 4px 18px rgba(0,0,0,0.35)', textAlign: slideStyle.textAlign || 'left' }}>{slide.title}</p>
+                        <p style={{ fontFamily: slideStyle.fontFamily || 'Poppins', fontStyle: slideStyle.fontStyle || 'normal', fontSize: `${slideStyle.subtitleFontSize || Math.max(18, ((slideStyle.titleFontSize || slideStyle.fontSize || DEFAULT_STYLE.titleFontSize) * 0.45))}px`, fontWeight: '400', lineHeight: 1.3, color: slideStyle.textColor || '#FFFFFF' }}>{slide.subtitle}</p>
                       </div>
                     </div>
                     <div className="absolute right-3 top-3 flex gap-2">
