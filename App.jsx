@@ -1,11 +1,23 @@
-import ManageContact from './ManageContact';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext'; // Pastikan path ini benar
+import ProtectedRoute from './components/ProtectedRoute'; // Pastikan path ini benar
+import Navbar from './Navbar';
 import Footer from './Footer';
-import ManageEvents from './ManageEvents';
-import ManageHero from './ManageHero';
+import Home from './Home';
+import Login from './Login';
+import Gallery from './Gallery';
+import Programs from './Programs';
+import About from './About';
+import Structure from './Structure';
+import Contact from './Contact';
 import AdminDashboard from './AdminDashboard';
 import AdminSidebar from './AdminSidebar';
 import ManageStructure from './ManageStructure';
+import ManageEvents from './ManageEvents';
+import ManageHero from './ManageHero';
 import ManageDepartments from './ManageDepartments';
+import ManageContact from './ManageContact';
 
 function App() {
   return (
@@ -24,7 +36,7 @@ function App() {
           {/* Halaman Admin yang Dilindungi */}
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminSidebar><AdminDashboard /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/structure" element={<ProtectedRoute><AdminSidebar><ManageStructure /></AdminSidebar></ProtectedRoute>} />
-          <Route path="/admin/events" element={<ProtectedRoute><AdminSidebar><ManageEvents /></ProtectedRoute>} />
+          <Route path="/admin/events" element={<ProtectedRoute><AdminSidebar><ManageEvents /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/hero" element={<ProtectedRoute><AdminSidebar><ManageHero /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/departments" element={<ProtectedRoute><AdminSidebar><ManageDepartments /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute><AdminSidebar><ManageContact /></AdminSidebar></ProtectedRoute>} />
