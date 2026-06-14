@@ -56,7 +56,7 @@ const ManageHero = () => {
         titleFont: titleFont || 'font-sans',
         titleItalic: Boolean(titleItalic),
         subtitleFont: subtitleFont || 'font-serif',
-        subtitleItalic: false, // Paksa false agar tidak miring
+        subtitleItalic: Boolean(subtitleItalic),
         updatedAt: serverTimestamp()
       };
 
@@ -156,7 +156,7 @@ const ManageHero = () => {
                 placeholder="Sub-judul"
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
-                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-serif'} not-italic`}
+                className={`w-full p-3 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all ${subtitleFont || 'font-serif'} ${subtitleItalic ? 'italic' : ''}`}
                 required
               />
               <div className="flex gap-2">
@@ -169,6 +169,13 @@ const ManageHero = () => {
                   <option value="font-serif">Serif (Klasik)</option>
                   <option value="font-mono">Mono (Kode)</option>
                 </select>
+                <button 
+                  type="button"
+                  onClick={() => setSubtitleItalic(!subtitleItalic)}
+                  className={`text-xs px-3 py-2 rounded-lg border transition-colors ${subtitleItalic ? 'bg-emerald-100 border-emerald-500 text-emerald-700 font-bold' : 'bg-white text-gray-500'}`}
+                >
+                  <i>I</i> Miring
+                </button>
               </div>
             </div>
           </div>
@@ -207,7 +214,7 @@ const ManageHero = () => {
               </div>
               <div className="p-4">
                 <h3 className={`font-bold text-emerald-900 ${slide.titleFont} ${slide.titleItalic ? 'italic' : ''}`}>{slide.title}</h3>
-                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-serif'} not-italic`}>{slide.subtitle}</p>
+                <p className={`text-sm text-gray-600 ${slide.subtitleFont || 'font-serif'} ${slide.subtitleItalic ? 'italic' : ''}`}>{slide.subtitle}</p>
                 <div className="mt-2 text-[10px] text-gray-400 uppercase tracking-widest">Blur: {slide.blurLevel}</div>
               </div>
             </div>

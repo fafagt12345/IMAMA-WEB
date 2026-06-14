@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FiMoreVertical, FiHome, FiCalendar, FiImage, FiUsers, 
-  FiMessageSquare, FiLogOut, FiSettings, FiChevronDown 
+  FiLogOut, FiSettings 
 } from 'react-icons/fi';
 import { auth } from './config';
 import { signOut } from 'firebase/auth';
