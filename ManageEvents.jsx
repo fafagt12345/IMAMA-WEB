@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from 'firebase/firestore';
-import { FiPlus, FiEdit2, FiTrash2, FiEye, FiEyeOff } from 'react-icons/fi';
+import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
 
 const ManageEvents = () => {
   const [items, setItems] = useState([]);
@@ -82,7 +82,7 @@ const ManageEvents = () => {
             required 
           />
           <button type="submit" className="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700 flex items-center justify-center gap-2 transition-all">
-            {isEditing ? <><FiEdit2 /> Update</> : <><FiPlus /> Tambah</>}
+            {isEditing ? <><Edit2 size={16} /> Update</> : <><Plus size={16} /> Tambah</>}
           </button>
         </div>
         <div className="md:col-span-2">
@@ -121,13 +121,13 @@ const ManageEvents = () => {
                 </td>
                 <td className="p-3 text-right space-x-2">
                   <button onClick={() => toggleStatus(item)} className="text-gray-500 hover:text-emerald-600">
-                    {item.status === 'aktif' ? <FiEye /> : <FiEyeOff />}
+                    {item.status === 'aktif' ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                   <button onClick={() => { setIsEditing(true); setFormData(item); }} className="text-blue-500 hover:text-blue-700">
-                    <FiEdit2 />
+                    <Edit2 size={18} />
                   </button>
                   <button onClick={async () => { if(confirm('Hapus?')) await deleteDoc(doc(db, 'events_contests', item.id)); fetchData(); }} className="text-red-500 hover:text-red-700">
-                    <FiTrash2 />
+                    <Trash2 size={18} />
                   </button>
                 </td>
               </tr>

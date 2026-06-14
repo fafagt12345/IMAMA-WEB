@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
-  FiMoreVertical, FiHome, FiCalendar, FiImage, FiUsers, 
-  FiLogOut, FiSettings 
-} from 'react-icons/fi';
+  MoreVertical, Home, Calendar, Image, Users, 
+  LogOut, Settings 
+} from 'lucide-react';
 import { auth } from './config';
 import { signOut } from 'firebase/auth';
 
@@ -14,11 +14,11 @@ const AdminSidebar = ({ children }) => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { path: '/admin/dashboard', icon: <FiHome />, label: 'Dashboard' },
-    { path: '/admin/events', icon: <FiCalendar />, label: 'Event & Lomba' },
-    { path: '/admin/hero', icon: <FiImage />, label: 'Hero Banner' },
-    { path: '/admin/structure', icon: <FiUsers />, label: 'Struktur' },
-    { path: '/admin/departments', icon: <FiSettings />, label: 'Departemen' },
+    { path: '/admin/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
+    { path: '/admin/events', icon: <Calendar size={20} />, label: 'Event & Lomba' },
+    { path: '/admin/hero', icon: <Image size={20} />, label: 'Hero Banner' },
+    { path: '/admin/structure', icon: <Users size={20} />, label: 'Struktur' },
+    { path: '/admin/departments', icon: <Settings size={20} />, label: 'Departemen' },
   ];
 
   const handleLogout = async () => {
@@ -40,7 +40,7 @@ const AdminSidebar = ({ children }) => {
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-2 hover:bg-emerald-800 rounded-lg transition-colors"
           >
-            <FiMoreVertical size={24} />
+            <MoreVertical size={24} />
           </button>
         </div>
 
@@ -65,7 +65,7 @@ const AdminSidebar = ({ children }) => {
             onClick={handleLogout}
             className="flex items-center w-full p-2 text-emerald-300 hover:text-white transition-colors"
           >
-            <FiLogOut size={20} />
+            <LogOut size={20} />
             {!isCollapsed && <span className="ml-3 text-sm">Keluar Panel</span>}
           </button>
         </div>
@@ -75,7 +75,7 @@ const AdminSidebar = ({ children }) => {
       <div className="md:hidden fixed top-0 w-full bg-emerald-900 text-white p-4 flex justify-between items-center z-50">
         <span className="font-bold">IMAMA WEB</span>
         <button onClick={() => setIsMobileOpen(!isMobileOpen)}>
-          <FiMoreVertical size={24} />
+          <MoreVertical size={24} />
         </button>
       </div>
 
@@ -94,7 +94,7 @@ const AdminSidebar = ({ children }) => {
               </Link>
             ))}
             <button onClick={handleLogout} className="flex items-center p-2 text-red-300">
-              <FiLogOut /> <span className="ml-3">Keluar</span>
+              <LogOut size={20} /> <span className="ml-3">Keluar</span>
             </button>
           </div>
         </div>

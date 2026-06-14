@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { collection, query, orderBy, limit, getDocs, doc, getDoc } from 'firebase/firestore';
-import { FiClock, FiActivity, FiTag, FiZap } from 'react-icons/fi';
+import { Clock, Activity, Tag, Zap } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [activities, setActivities] = useState({
@@ -37,7 +37,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-emerald-500">
           <div className="flex items-center gap-4 text-emerald-600 mb-2">
-            <FiZap size={24} /> <span className="font-semibold uppercase text-sm">Hero Banner</span>
+            <Zap size={24} /> <span className="font-semibold uppercase text-sm">Hero Banner</span>
           </div>
           <p className="text-gray-500 text-sm">Terakhir diupdate:</p>
           <p className="font-bold">{activities.lastHero ? new Date(activities.lastHero).toLocaleString() : 'Belum ada data'}</p>
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
 
         <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-blue-500">
           <div className="flex items-center gap-4 text-blue-600 mb-2">
-            <FiTag size={24} /> <span className="font-semibold uppercase text-sm">Event Terbaru</span>
+            <Tag size={24} /> <span className="font-semibold uppercase text-sm">Event Terbaru</span>
           </div>
           <ul className="text-sm space-y-1">
             {activities.events.map((ev, i) => (
@@ -57,7 +57,7 @@ const AdminDashboard = () => {
 
         <div className="bg-white p-6 rounded-xl shadow-sm border-l-4 border-purple-500">
           <div className="flex items-center gap-4 text-purple-600 mb-2">
-            <FiActivity size={24} /> <span className="font-semibold uppercase text-sm">Sistem</span>
+            <Activity size={24} /> <span className="font-semibold uppercase text-sm">Sistem</span>
           </div>
           <div className="text-sm">
             <p>Database: <span className="text-green-600 font-bold">Online</span></p>
@@ -67,7 +67,7 @@ const AdminDashboard = () => {
       </div>
 
       <div className="bg-emerald-50 p-6 rounded-xl text-emerald-800 border border-emerald-100">
-        <h3 className="font-bold mb-2 flex items-center gap-2"><FiClock /> Petunjuk Admin</h3>
+        <h3 className="font-bold mb-2 flex items-center gap-2"><Clock size={18} /> Petunjuk Admin</h3>
         <p className="text-sm">Gunakan menu di sebelah kiri untuk mengelola konten website. Perubahan pada Hero Banner akan langsung berdampak pada halaman utama pengunjung.</p>
       </div>
     </div>
