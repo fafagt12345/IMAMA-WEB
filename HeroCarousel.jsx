@@ -27,16 +27,28 @@ const HeroCarousel = () => {
   }, [nextSlide, slides.length]);
 
   if (loading) return <div className="h-screen bg-emerald-950 flex items-center justify-center text-white">Memuat...</div>;
-  if (slides.length === 0) return null;
 
-  const activeSlide = slides[currentIndex] || {};
+  const hasSlides = slides.length > 0;
+  const activeSlide = hasSlides ? slides[currentIndex] : {
+    title: "Ikatan Mahasiswa Magetan",
+    subtitle: "Wadah pemersatu mahasiswa Magetan di Universitas Negeri Surabaya untuk berkarya, berprestasi, dan berkontribusi bagi daerah.",
+    imageUrl: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?q=80&w=2100&auto=format&fit=crop",
+    textSettings: {
+      titleFontFamily: 'Playfair Display',
+      subtitleFontFamily: 'Inter',
+      textColor: '#FFFFFF',
+      textAlign: 'center',
+      fontWeight: '700',
+    }
+  };
+
   const slideStyle = activeSlide.textSettings || {};
   const imageSrc = activeSlide.imageUrl || activeSlide.url || activeSlide.image || '';
   const titleFontSize = slideStyle.titleFontSize || slideStyle.fontSize || 54;
   const subtitleFontSize = slideStyle.subtitleFontSize || Math.max(18, titleFontSize * 0.45);
 
   const titleStyle = {
-    fontFamily: slideStyle.titleFontFamily || slideStyle.fontFamily || 'Poppins',
+    fontFamily: slideStyle.titleFontFamily || slideStyle.fontFamily || 'Playfair Display',
     fontStyle: slideStyle.fontStyle || 'normal',
     fontSize: `${titleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '600',
@@ -47,7 +59,7 @@ const HeroCarousel = () => {
     textAlign: slideStyle.textAlign || 'left',
   };
   const subtitleStyle = {
-    fontFamily: slideStyle.subtitleFontFamily || slideStyle.fontFamily || 'Poppins',
+    fontFamily: slideStyle.subtitleFontFamily || slideStyle.fontFamily || 'Inter',
     fontStyle: slideStyle.fontStyle || 'normal',
     fontSize: `${subtitleFontSize}px`,
     fontWeight: slideStyle.fontWeight || '400',
@@ -118,29 +130,29 @@ const HeroCarousel = () => {
       </div>
 
       {/* Navigation Controls */}
-      <button 
-        onClick={prevSlide}
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-      >
-        <ChevronLeft size={24} className="sm:w-8 sm:h-8" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
-      >
-        <ChevronRight size={24} className="sm:w-8 sm:h-8" />
-      </button>
+      {hasSlides && (
+        <>
+          <button onClick={prevSlide} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+            <ChevronLeft size={24} className="sm:w-8 sm:h-8" />
+          </button>
+          <button onClick={nextSlide} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 p-1 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors">
+            <ChevronRight size={24} className="sm:w-8 sm:h-8" />
+          </button>
+        </>
+      )}
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex gap-3">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentIndex(index)}
-            className={`h-2 rounded-full transition-all duration-300 ${currentIndex === index ? 'w-8 bg-emerald-500' : 'w-2 bg-white/30 hover:bg-white/50'}`}
-          />
-        ))}
-      </div>
+      {hasSlides && (
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-50 flex gap-3">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className={`h-2 rounded-full transition-all duration-300 ${currentIndex === index ? 'w-8 bg-emerald-500' : 'w-2 bg-white/30 hover:bg-white/50'}`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -3,15 +3,15 @@ import { db, auth } from './config';
 import { addDoc, collection, deleteDoc, doc, getDoc, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { Edit2, Image as ImageIcon, Plus, Trash2, X } from 'lucide-react';
 
-const FONT_OPTIONS = ['Poppins', 'Inter', 'Montserrat', 'Roboto', 'Open Sans', 'Playfair Display', 'Lora', 'Merriweather', 'Times New Roman', 'Georgia'];
+const FONT_OPTIONS = ['Playfair Display', 'Inter', 'Poppins', 'Montserrat', 'Roboto', 'Open Sans', 'Lora', 'Merriweather'];
 const WEIGHT_OPTIONS = ['300', '400', '500', '600', '700'];
 const ALIGN_OPTIONS = ['left', 'center', 'right'];
 const ANIMATION_OPTIONS = ['none', 'fadeIn', 'slideUp', 'slideLeft', 'zoomIn'];
 
 const DEFAULT_STYLE = {
-  fontFamily: 'Poppins',
-  titleFontFamily: 'Poppins',
-  subtitleFontFamily: 'Poppins',
+  fontFamily: 'Playfair Display',
+  titleFontFamily: 'Playfair Display',
+  subtitleFontFamily: 'Inter',
   fontStyle: 'normal',
   fontSize: 54,
   titleFontSize: 54,
