@@ -9,11 +9,15 @@ const About = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(doc(db, 'settings', 'about'), (docSnap) => {
+    const docRef = doc(db, 'settings', 'about');
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         setAboutData(docSnap.data());
       }
       setLoading(false);
+    }, (error) => {
+      console.error("Gagal mengambil data 'Tentang':", error);
+      setLoading(false); // Pastikan loading berhenti jika terjadi error
     });
     return () => unsubscribe();
   }, []);

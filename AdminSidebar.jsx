@@ -24,6 +24,8 @@ const AdminSidebar = ({ children }) => {
     { path: '/admin/dashboard', icon: <Home size={20} />, label: 'Dashboard' },
     { path: '/admin/events', icon: <Calendar size={20} />, label: 'Event & Lomba' },
     { path: '/admin/hero', icon: <Image size={20} />, label: 'Hero Banner' },
+    { path: '/admin/programs', icon: <Briefcase size={20} />, label: 'Program Kerja' },
+    { path: '/admin/gallery', icon: <ImageIcon size={20} />, label: 'Galeri' },
     { path: '/admin/structure', icon: <Users size={20} />, label: 'Struktur' },
     { path: '/admin/departments', icon: <Settings size={20} />, label: 'Departemen' },
     { path: '/admin/contact', icon: <Phone size={20} />, label: 'Kontak' },
