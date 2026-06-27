@@ -17,6 +17,8 @@ import AdminDashboard from './AdminDashboard';
 import AdminSidebar from './AdminSidebar';
 import ManageStructure from './ManageStructure';
 import ManageEvents from './ManageEvents';
+import ManagePrograms from './ManagePrograms';
+import ManageGallery from './ManageGallery';
 import ManageHero from './ManageHero';
 import ManageDepartments from './ManageDepartments';
 import ManagePrograms from './ManagePrograms';
@@ -44,6 +46,8 @@ function App() {
           <Route path="/admin/dashboard" element={<ProtectedRoute><AdminSidebar><AdminDashboard /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/structure" element={<ProtectedRoute><AdminSidebar><ManageStructure /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/events" element={<ProtectedRoute><AdminSidebar><ManageEvents /></AdminSidebar></ProtectedRoute>} />
+          <Route path="/admin/programs" element={<ProtectedRoute><AdminSidebar><ManagePrograms /></AdminSidebar></ProtectedRoute>} />
+          <Route path="/admin/gallery" element={<ProtectedRoute><AdminSidebar><ManageGallery /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/programs" element={<ProtectedRoute><AdminSidebar><ManagePrograms /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/gallery" element={<ProtectedRoute><AdminSidebar><ManageGallery /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/hero" element={<ProtectedRoute><AdminSidebar><ManageHero /></AdminSidebar></ProtectedRoute>} />

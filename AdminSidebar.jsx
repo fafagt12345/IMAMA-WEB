@@ -10,6 +10,8 @@ import {
   MoreHorizontal,
   ShieldCheck,
   Phone,
+  Briefcase,
+  ImageIcon,
 } from 'lucide-react';
 import { auth } from './config';
 import { signOut } from 'firebase/auth';
