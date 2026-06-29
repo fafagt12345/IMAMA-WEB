@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { db, storage } from './config';
-import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useFetch } from './hooks/useFetch';
 import { Users, Edit, Trash2, UserPlus, X } from 'lucide-react';
@@ -21,8 +21,15 @@ const ManageStructure = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const hasKetua = members.some(m => m.position === 'Ketua' && m.id !== editingId);
-  const hasWakil = members.some(m => m.position === 'Wakil' && m.id !== editingId);
+  // Validasi Ketua & Wakil per departemen
+  const hasKetua = useMemo(() => {
+    if (!formData.departmentId) return false;
+    return members.some(m => m.position === 'Ketua' && m.departmentId === formData.departmentId && m.id !== editingId);
+  }, [members, formData.departmentId, editingId]);
+  const hasWakil = useMemo(() => {
+    if (!formData.departmentId) return false;
+    return members.some(m => m.position === 'Wakil' && m.departmentId === formData.departmentId && m.id !== editingId);
+  }, [members, formData.departmentId, editingId]);
 
   const resetForm = () => {
     setFormData({ name: '', prodi: '', position: 'Staff', departmentId: '', photoUrl: '' });
@@ -62,11 +69,11 @@ const ManageStructure = () => {
     e.preventDefault();
     setError('');
 
-    if (formData.position === 'Ketua' && hasKetua) {
-      setError('Ketua sudah ada. Anda tidak bisa menambahkan ketua lagi.');
+    if (formData.position === 'Ketua' && hasKetua && formData.departmentId) {
+      setError('Ketua untuk departemen ini sudah ada. Anda tidak bisa menambahkan lagi.');
       return;
     }
-    if (formData.position === 'Wakil' && hasWakil) {
+    if (formData.position === 'Wakil' && hasWakil && formData.departmentId) {
       setError('Wakil sudah ada. Anda tidak bisa menambahkan wakil lagi.');
       return;
     }
@@ -119,12 +126,12 @@ const ManageStructure = () => {
             <input type="text" name="prodi" placeholder="Program Studi" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
             
             <select name="position" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} className="p-3 bg-gray-50 border rounded-xl">
+              <option value="Ketua" disabled={hasKetua}>Ketua Departemen</option>
+              <option value="Wakil" disabled={hasWakil}>Wakil Departemen</option>
               <option value="Staff">Staff</option>
-              <option value="Ketua" disabled={hasKetua}>Ketua (hanya 1)</option>
-              <option value="Wakil" disabled={hasWakil}>Wakil (hanya 1)</option>
             </select>
 
-            <select name="departmentId" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} className="p-3 bg-gray-50 border rounded-xl md:col-span-2" required>
+            <select name="departmentId" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required>
               <option value="">Pilih Departemen</option>
               {departments.map(dept => (
                 <option key={dept.id} value={dept.id}>{dept.name}</option>
@@ -146,46 +153,46 @@ const ManageStructure = () => {
           </div>
         </form>
 
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-emerald-50 text-emerald-900">
-              <tr>
-                <th className="p-4 font-bold uppercase text-xs">Nama</th>
-                <th className="p-4 font-bold uppercase text-xs">Prodi</th>
-                <th className="p-4 font-bold uppercase text-xs">Jabatan</th>
-                <th className="p-4 font-bold uppercase text-xs">Departemen</th>
-                <th className="p-4 text-right font-bold uppercase text-xs">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fetchLoading ? (
-                <tr><td colSpan="5" className="p-8 text-center text-gray-400 italic">Memuat anggota...</td></tr>
-              ) : members.length > 0 ? (
-                members.map((member) => {
-                  const department = departments.find(d => d.id === member.departmentId);
-                  return (
-                    <tr key={member.id} className="border-t hover:bg-gray-50 transition">
-                      <td className="p-4 font-medium text-gray-700 flex items-center gap-3">
-                        <img src={member.photoUrl || 'https://via.placeholder.com/40'} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
-                        {member.name}
-                      </td>
-                      <td className="p-4 text-gray-600 text-sm">{member.prodi}</td>
-                      <td className="p-4 text-gray-600 text-sm">{member.position}</td>
-                      <td className="p-4 text-gray-600 text-sm">{department?.name || 'N/A'}</td>
-                      <td className="p-4 text-right space-x-4">
-                        <button onClick={() => handleEdit(member)} className="text-blue-600 hover:text-blue-800"><Edit size={18} /></button>
-                        <button onClick={() => handleDelete(member.id, member.photoUrl)} className="text-red-600 hover:text-red-800"><Trash2 size={18} /></button>
-                      </td>
+        <div className="space-y-8">
+          {departments.map(dept => {
+            const deptMembers = members.filter(m => m.departmentId === dept.id);
+            if (deptMembers.length === 0) return null;
+
+            return (
+              <div key={dept.id} className="bg-white rounded-xl shadow-md overflow-hidden">
+                <h3 className="p-4 bg-emerald-50 text-emerald-900 font-bold text-lg">{dept.name}</h3>
+                <table className="w-full text-left">
+                  <thead className="bg-gray-50 text-gray-600">
+                    <tr>
+                      <th className="p-4 font-semibold uppercase text-xs">Nama</th>
+                      <th className="p-4 font-semibold uppercase text-xs">Prodi</th>
+                      <th className="p-4 font-semibold uppercase text-xs">Jabatan</th>
+                      <th className="p-4 text-right font-semibold uppercase text-xs">Aksi</th>
                     </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="5" className="p-8 text-center text-gray-400 italic">Belum ada anggota yang ditambahkan.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  </thead>
+                  <tbody>
+                    {deptMembers.sort((a, b) => {
+                      const order = { 'Ketua': 1, 'Wakil': 2, 'Staff': 3 };
+                      return (order[a.position] || 4) - (order[b.position] || 4);
+                    }).map((member) => (
+                      <tr key={member.id} className="border-t hover:bg-gray-50 transition">
+                        <td className="p-4 font-medium text-gray-700 flex items-center gap-3">
+                          <img src={member.photoUrl || 'https://via.placeholder.com/40'} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
+                          {member.name}
+                        </td>
+                        <td className="p-4 text-gray-600 text-sm">{member.prodi}</td>
+                        <td className="p-4 text-gray-600 text-sm font-semibold">{member.position}</td>
+                        <td className="p-4 text-right space-x-4">
+                          <button onClick={() => handleEdit(member)} className="text-blue-600 hover:text-blue-800"><Edit size={18} /></button>
+                          <button onClick={() => handleDelete(member.id, member.photoUrl)} className="text-red-600 hover:text-red-800"><Trash2 size={18} /></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
