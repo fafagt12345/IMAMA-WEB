@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFetch } from './hooks/useFetch';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -6,6 +6,16 @@ import { X } from 'lucide-react';
 const Gallery = () => {
   const { data: images = [], loading } = useFetch('gallery');
   const [selectedImg, setSelectedImg] = useState(null);
+
+  // Efek untuk mengunci scroll di body saat modal terbuka
+  useEffect(() => {
+    if (selectedImg) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => { document.body.style.overflow = 'auto'; };
+  }, [selectedImg]);
 
   // Hanya tampilkan gambar yang status visibilitasnya aktif
   const visibleImages = images.filter(img => img.isVisible !== false);
@@ -70,7 +80,7 @@ const Gallery = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat klik di dalam konten
               className="max-w-5xl w-full flex flex-col items-center"
             >
               <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl bg-black flex items-center justify-center">
@@ -81,8 +91,8 @@ const Gallery = () => {
                 />
               </div>
               
-              <div className="mt-6 text-center max-w-3xl">
-                <motion.p 
+              <div className="mt-6 text-center max-w-3xl overflow-y-auto max-h-[20vh]">
+                <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}

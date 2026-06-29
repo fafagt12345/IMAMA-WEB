@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { Phone, Mail, User, Instagram, Youtube, Save, MessageSquare } from 'lucide-react';
+import { Phone, Mail, User, Instagram, Youtube, Save, ShoppingBag, Music } from 'lucide-react';
 
 const ManageContact = () => {
   const [contact, setContact] = useState({
@@ -102,14 +102,14 @@ const ManageContact = () => {
             {/* Instagram Ekraf */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">Instagram Ekraf</label>
-              <div className="relative"><div className="absolute left-3 top-3.5 text-gray-400"><Instagram size={18} /></div><input type="text" name="instagram_ekraf" placeholder="imamaekraf" value={contact.instagram_ekraf} onChange={handleChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
+              <div className="relative"><div className="absolute left-3 top-3.5 text-gray-400"><ShoppingBag size={18} /></div><input type="text" name="instagram_ekraf" placeholder="imamaekraf" value={contact.instagram_ekraf} onChange={handleChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
             </div>
 
 
             {/* TikTok */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">TikTok</label>
-              <div className="relative"><div className="absolute left-3 top-3.5 text-gray-400"><MessageSquare size={18} /></div><input type="text" name="tiktok" placeholder="@imama.unesa" value={contact.tiktok} onChange={handleChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
+              <div className="relative"><div className="absolute left-3 top-3.5 text-gray-400"><Music size={18} /></div><input type="text" name="tiktok" placeholder="@imama.unesa" value={contact.tiktok} onChange={handleChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
             </div>
 
             {/* YouTube */}
