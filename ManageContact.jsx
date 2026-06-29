@@ -67,13 +67,6 @@ const ManageContact = () => {
         
         <form onSubmit={handleSave} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-6">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Alamat */}
-            <div className="lg:col-span-3">
-              <label className="block text-sm font-bold text-gray-700 mb-2">Alamat Sekretariat</label>
-              <div className="relative">
-                <textarea name="address" value={contact.address} onChange={handleChange} className="w-full p-3 bg-gray-50 border rounded-xl h-24 outline-none focus:ring-2 focus:ring-emerald-500" />
-              </div>
-            </div>
 
             {/* Email */}
             <div>

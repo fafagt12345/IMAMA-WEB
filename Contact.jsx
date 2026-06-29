@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { Phone, Mail, MapPin, Instagram, Youtube, Send, User, MessageSquare } from 'lucide-react';
+import { Phone, Mail, Instagram, Youtube, Send, User, MessageSquare } from 'lucide-react';
 
 const Contact = () => {
   const [contact, setContact] = useState({});
@@ -38,13 +38,6 @@ const Contact = () => {
 
             <div className="space-y-6">
               <div className="flex gap-4">
-                <MapPin className="text-emerald-400 mt-1 flex-shrink-0" size={24} />
-                <div>
-                  <h4 className="font-bold">Alamat</h4>
-                  <p className="text-emerald-200">{loading ? 'Memuat...' : (contact.address || 'Ketintang, Surabaya')}</p>
-                </div>
-              </div>
-              <div className="flex gap-4">
                 <Mail className="text-emerald-400 mt-1 flex-shrink-0" size={20} />
                 <div>
                   <h4 className="font-bold">Email</h4>
@@ -80,7 +73,7 @@ const Contact = () => {
               <div className="flex gap-4">
                 {contact.instagram && (<a href={`https://instagram.com/${contact.instagram}`} target="_blank" rel="noopener noreferrer" className="text-emerald-200 hover:text-white" title="Instagram"><Instagram /></a>)}
                 {contact.instagram_ekraf && (<a href={`https://instagram.com/${contact.instagram_ekraf}`} target="_blank" rel="noopener noreferrer" className="text-emerald-200 hover:text-white" title="Instagram Ekraf"><Instagram /></a>)}
-                {contact.tiktok && (<a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="text-emerald-200 hover:text-white"><Tiktok /></a>)}
+                {contact.tiktok && (<a href={`https://tiktok.com/@${contact.tiktok}`} target="_blank" rel="noopener noreferrer" className="text-emerald-200 hover:text-white"><MessageSquare /></a>)}
                 {contact.youtube && (<a href={`https://youtube.com/${contact.youtube}`} target="_blank" rel="noopener noreferrer" className="text-emerald-200 hover:text-white"><Youtube /></a>)}
               </div>
             </div>
