@@ -67,31 +67,31 @@ const Gallery = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImg(null)}
-            className="fixed inset-0 z-[100] bg-black/90 flex flex-col items-center justify-center p-4 md:p-10"
+            className="fixed inset-0 z-[100] bg-black/90 overflow-y-auto p-4 pt-20 md:p-10"
           >
             <button 
               onClick={() => setSelectedImg(null)}
-              className="absolute top-6 right-6 text-white hover:text-emerald-400 transition-colors p-2"
+              className="absolute top-4 right-4 z-10 text-white hover:text-emerald-400 transition-colors p-2 bg-black/30 rounded-full"
             >
-              <X size={40} />
+              <X size={28} />
             </button>
 
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-            onClick={(e) => e.stopPropagation()} // Mencegah modal tertutup saat klik di dalam konten
-              className="max-w-5xl w-full flex flex-col items-center"
+              onClick={(e) => e.stopPropagation()}
+              className="max-w-4xl w-full flex flex-col items-center"
             >
               <div className="relative w-full overflow-hidden rounded-2xl shadow-2xl bg-black flex items-center justify-center">
                 <img 
                   src={selectedImg.url} 
                   alt={selectedImg.caption} 
-                  className="max-h-[70vh] w-auto object-contain"
+                  className="w-full h-auto object-contain"
                 />
               </div>
               
-              <div className="mt-6 text-center max-w-3xl overflow-y-auto max-h-[20vh]">
+              <div className="mt-6 text-center max-w-3xl">
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
