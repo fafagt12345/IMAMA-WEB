@@ -34,6 +34,7 @@ const Structure = () => {
       />
       <h3 className="font-bold text-emerald-900">{member.name}</h3>
       <p className="text-sm text-emerald-600 font-semibold">{member.position}</p>
+      <p className="text-xs text-gray-500">{member.prodi}</p>
     </motion.div>
   );
 
@@ -82,6 +83,7 @@ const Structure = () => {
                         className="w-20 h-20 mx-auto rounded-full object-cover mb-3 border-2 border-gray-100"
                       />
                       <h4 className="font-semibold text-sm text-gray-800">{member.name}</h4>
+                      <p className="text-xs text-gray-500">{member.prodi}</p>
                     </motion.div>
                   ))}
                 </div>

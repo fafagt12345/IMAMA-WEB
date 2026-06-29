@@ -11,6 +11,7 @@ const ManageStructure = () => {
 
   const [formData, setFormData] = useState({
     name: '',
+    prodi: '',
     position: 'Staff', // Jabatan: Ketua, Wakil, Staff
     departmentId: '',
     photoUrl: '',
@@ -24,7 +25,7 @@ const ManageStructure = () => {
   const hasWakil = members.some(m => m.position === 'Wakil' && m.id !== editingId);
 
   const resetForm = () => {
-    setFormData({ name: '', position: 'Staff', departmentId: '', photoUrl: '' });
+    setFormData({ name: '', prodi: '', position: 'Staff', departmentId: '', photoUrl: '' });
     setPhoto(null);
     setEditingId(null);
     setError('');
@@ -35,6 +36,7 @@ const ManageStructure = () => {
     setEditingId(member.id);
     setFormData({
       name: member.name,
+      prodi: member.prodi || '',
       position: member.position,
       departmentId: member.departmentId || '',
       photoUrl: member.photoUrl || '',
@@ -114,6 +116,7 @@ const ManageStructure = () => {
           {error && <div className="bg-red-100 text-red-700 p-3 rounded-lg text-sm">{error}</div>}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input type="text" name="name" placeholder="Nama Lengkap" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
+            <input type="text" name="prodi" placeholder="Program Studi" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
             
             <select name="position" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} className="p-3 bg-gray-50 border rounded-xl">
               <option value="Staff">Staff</option>
@@ -148,6 +151,7 @@ const ManageStructure = () => {
             <thead className="bg-emerald-50 text-emerald-900">
               <tr>
                 <th className="p-4 font-bold uppercase text-xs">Nama</th>
+                <th className="p-4 font-bold uppercase text-xs">Prodi</th>
                 <th className="p-4 font-bold uppercase text-xs">Jabatan</th>
                 <th className="p-4 font-bold uppercase text-xs">Departemen</th>
                 <th className="p-4 text-right font-bold uppercase text-xs">Aksi</th>
@@ -155,7 +159,7 @@ const ManageStructure = () => {
             </thead>
             <tbody>
               {fetchLoading ? (
-                <tr><td colSpan="4" className="p-8 text-center text-gray-400 italic">Memuat anggota...</td></tr>
+                <tr><td colSpan="5" className="p-8 text-center text-gray-400 italic">Memuat anggota...</td></tr>
               ) : members.length > 0 ? (
                 members.map((member) => {
                   const department = departments.find(d => d.id === member.departmentId);
@@ -165,6 +169,7 @@ const ManageStructure = () => {
                         <img src={member.photoUrl || 'https://via.placeholder.com/40'} alt={member.name} className="w-10 h-10 rounded-full object-cover" />
                         {member.name}
                       </td>
+                      <td className="p-4 text-gray-600 text-sm">{member.prodi}</td>
                       <td className="p-4 text-gray-600 text-sm">{member.position}</td>
                       <td className="p-4 text-gray-600 text-sm">{department?.name || 'N/A'}</td>
                       <td className="p-4 text-right space-x-4">
@@ -176,7 +181,7 @@ const ManageStructure = () => {
                 })
               ) : (
                 <tr>
-                  <td colSpan="4" className="p-8 text-center text-gray-400 italic">Belum ada anggota yang ditambahkan.</td>
+                  <td colSpan="5" className="p-8 text-center text-gray-400 italic">Belum ada anggota yang ditambahkan.</td>
                 </tr>
               )}
             </tbody>
