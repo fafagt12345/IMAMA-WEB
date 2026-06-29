@@ -14,7 +14,7 @@ import Structure from './Structure';
 import Contact from './Contact';
 import Event from './Event';
 import EventDetail from './EventDetail';
-import AdminDashboard from './AdminDashboard';
+import AdminDashboard from './AdminDashboard'; 
 import AdminSidebar from './AdminSidebar';
 import ManageStructure from './ManageStructure';
 import ManageEvents from './ManageEvents';
