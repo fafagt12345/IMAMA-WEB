@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Phone,
   Info,
+  ShoppingCart,
   Briefcase,
   ImageIcon,
 } from 'lucide-react';
@@ -30,6 +31,7 @@ const AdminSidebar = ({ children }) => {
     { path: '/admin/programs', icon: <Briefcase size={20} />, label: 'Program Kerja' },
     { path: '/admin/gallery', icon: <ImageIcon size={20} />, label: 'Galeri' },
     { path: '/admin/structure', icon: <Users size={20} />, label: 'Struktur' },
+    { path: '/admin/merchandise', icon: <ShoppingCart size={20} />, label: 'Merchandise' },
     { path: '/admin/about', icon: <Info size={20} />, label: 'Tentang' },
     { path: '/admin/departments', icon: <Settings size={20} />, label: 'Departemen' },
     { path: '/admin/contact', icon: <Phone size={20} />, label: 'Kontak' },

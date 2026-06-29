@@ -8,6 +8,8 @@ import {
   Sparkles,
   Trophy,
   Users2,
+  ShoppingCart,
+  Package,
 } from 'lucide-react';
 
 const formatDate = (value) => {
@@ -27,6 +29,7 @@ const AdminDashboard = () => {
   const [departments, setDepartments] = useState([]);
   const [subDepartments, setSubDepartments] = useState([]);
   const [heroMeta, setHeroMeta] = useState(null);
+  const [merchandise, setMerchandise] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,6 +50,10 @@ const AdminDashboard = () => {
       setHeroMeta(heroDoc ? { id: heroDoc.id, ...heroDoc.data() } : null);
     });
 
+    const unsubMerch = onSnapshot(collection(db, 'merchandise'), (snapshot) => {
+      setMerchandise(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+
     setLoading(false);
 
     return () => {
@@ -54,19 +61,23 @@ const AdminDashboard = () => {
       unsubDepartments();
       unsubMembers();
       unsubHero();
+      unsubMerch();
     };
   }, []);
 
   const stats = useMemo(() => {
     const totalEvents = events.length;
     const totalLomba = events.filter((item) => String(item.type || '').toLowerCase() === 'lomba').length;
+    const availableMerch = merchandise.filter(p => p.stockStatus === 'Tersedia').length;
     return {
       totalDepartments: departments.length,
       totalSubDepartments: subDepartments.length,
       totalEvents,
       totalLomba,
+      totalMerchandise: merchandise.length,
+      availableMerchandise: availableMerch,
     };
-  }, [departments.length, events, subDepartments.length]);
+  }, [departments.length, events, subDepartments.length, merchandise]);
 
   const latestEvent = events[0] || null;
   const latestLomba = events.find((item) => String(item.type || '').toLowerCase() === 'lomba') || null;
@@ -112,6 +123,8 @@ const AdminDashboard = () => {
           { label: 'Total Sub Departemen', value: stats.totalSubDepartments, icon: <Users2 size={22} />, tone: 'from-sky-500 to-cyan-500', bg: 'bg-sky-50 text-sky-700', text: 'text-sky-700' },
           { label: 'Total Event', value: stats.totalEvents, icon: <CalendarDays size={22} />, tone: 'from-violet-500 to-fuchsia-500', bg: 'bg-violet-50 text-violet-700', text: 'text-violet-700' },
           { label: 'Total Lomba', value: stats.totalLomba, icon: <Trophy size={22} />, tone: 'from-amber-500 to-orange-500', bg: 'bg-amber-50 text-amber-700', text: 'text-amber-700' },
+          { label: 'Total Merchandise', value: stats.totalMerchandise, icon: <ShoppingCart size={22} />, tone: 'from-rose-500 to-pink-500', bg: 'bg-rose-50 text-rose-700', text: 'text-rose-700' },
+          { label: 'Merch Tersedia', value: stats.availableMerchandise, icon: <Package size={22} />, tone: 'from-lime-500 to-green-500', bg: 'bg-lime-50 text-lime-700', text: 'text-lime-700' },
         ].map((item) => (
           <article key={item.label} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-xl">
             <div className="flex items-start justify-between">

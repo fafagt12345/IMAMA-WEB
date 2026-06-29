@@ -8,6 +8,7 @@ import Home from './Home';
 import Login from './Login';
 import Gallery from './Gallery';
 import Programs from './Programs';
+import Merchandise from './Merchandise';
 import About from './About';
 import Structure from './Structure';
 import Contact from './Contact';
@@ -20,6 +21,7 @@ import ManageEvents from './ManageEvents';
 import ManagePrograms from './ManagePrograms';
 import ManageGallery from './ManageGallery';
 import ManageHero from './ManageHero';
+import ManageMerchandise from './ManageMerchandise';
 import ManageAbout from './ManageAbout';
 import ManageDepartments from './ManageDepartments';
 import ManageContact from './ManageContact';
@@ -37,6 +39,7 @@ function App() {
           <Route path="/events" element={<Event />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/program-kerja" element={<Programs />} />
+          <Route path="/merchandise" element={<Merchandise />} />
           <Route path="/tentang" element={<About />} /> {/* Tambahkan route untuk halaman Tentang */}
           <Route path="/struktur" element={<Structure />} />
           <Route path="/kontak" element={<Contact />} />
@@ -48,6 +51,7 @@ function App() {
           <Route path="/admin/programs" element={<ProtectedRoute><AdminSidebar><ManagePrograms /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/gallery" element={<ProtectedRoute><AdminSidebar><ManageGallery /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/hero" element={<ProtectedRoute><AdminSidebar><ManageHero /></AdminSidebar></ProtectedRoute>} />
+          <Route path="/admin/merchandise" element={<ProtectedRoute><AdminSidebar><ManageMerchandise /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/about" element={<ProtectedRoute><AdminSidebar><ManageAbout /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/departments" element={<ProtectedRoute><AdminSidebar><ManageDepartments /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute><AdminSidebar><ManageContact /></AdminSidebar></ProtectedRoute>} />

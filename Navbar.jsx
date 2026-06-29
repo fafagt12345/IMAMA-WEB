@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { name: 'Struktur', path: '/struktur' },
   { name: 'Event', path: '/events' },
   { name: 'Program', path: '/program-kerja' },
+  { name: 'Merchandise', path: '/merchandise' },
   { name: 'Galeri', path: '/galeri' },
   { name: 'Kontak', path: '/kontak' },
 ];
