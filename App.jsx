@@ -20,6 +20,7 @@ import ManageEvents from './ManageEvents';
 import ManagePrograms from './ManagePrograms';
 import ManageGallery from './ManageGallery';
 import ManageHero from './ManageHero';
+import ManageAbout from './ManageAbout';
 import ManageDepartments from './ManageDepartments';
 import ManageContact from './ManageContact';
 import ManageNews from './ManageNews';
@@ -47,6 +48,7 @@ function App() {
           <Route path="/admin/programs" element={<ProtectedRoute><AdminSidebar><ManagePrograms /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/gallery" element={<ProtectedRoute><AdminSidebar><ManageGallery /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/hero" element={<ProtectedRoute><AdminSidebar><ManageHero /></AdminSidebar></ProtectedRoute>} />
+          <Route path="/admin/about" element={<ProtectedRoute><AdminSidebar><ManageAbout /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/departments" element={<ProtectedRoute><AdminSidebar><ManageDepartments /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/contact" element={<ProtectedRoute><AdminSidebar><ManageContact /></AdminSidebar></ProtectedRoute>} />
           <Route path="/admin/news" element={<ProtectedRoute><AdminSidebar><ManageNews /></AdminSidebar></ProtectedRoute>} />
