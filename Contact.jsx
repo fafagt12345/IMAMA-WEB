@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { Phone, Mail, MapPin, Instagram, Youtube, Tiktok, Send, User } from 'lucide-react';
+import { Phone, Mail, MapPin, Instagram, Youtube, Send, User, MessageSquare } from 'lucide-react';
 
 const Contact = () => {
   const [contact, setContact] = useState({});
