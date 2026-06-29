@@ -30,6 +30,24 @@ const Gallery = () => {
           <p className="text-gray-600 max-w-2xl mx-auto italic font-light">Dokumentasi perjalanan dan momen berharga IMAMA UNESA.</p>
         </div>
 
+        {/* Style untuk scrollbar kustom */}
+        <style>{`
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+          }
+          .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+          }
+        `}</style>
+
         {visibleImages.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {visibleImages.map((img) => (
@@ -67,7 +85,7 @@ const Gallery = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setSelectedImg(null)}
-            className="fixed inset-0 z-[100] bg-black/90 overflow-y-auto p-4 pt-20 md:p-10"
+            className="fixed inset-0 z-[100] bg-black/90 overflow-y-auto p-4 pt-20 md:p-10 custom-scrollbar"
           >
             <button 
               onClick={() => setSelectedImg(null)}
