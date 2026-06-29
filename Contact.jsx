@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { Phone, Mail, Instagram, Youtube, Send, User, ShoppingBag } from 'lucide-react';
 
 // Komponen SVG untuk logo TikTok
@@ -12,8 +12,10 @@ const TiktokIcon = () => (
 
 const Contact = () => {
   const [contact, setContact] = useState({});
-  const [message, setMessage] = useState({ name: '', email: '', content: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', content: '' });
   const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [formMessage, setFormMessage] = useState({ type: '', text: '' });
 
   useEffect(() => {
     const docRef = doc(db, 'settings', 'contact');
@@ -26,10 +28,36 @@ const Contact = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Logika untuk mengirim pesan bisa ditambahkan di sini
-    alert('Fitur kirim pesan belum diimplementasikan.');
+    if (!formData.name || !formData.email || !formData.content) {
+      setFormMessage({ type: 'error', text: 'Harap isi semua kolom yang wajib diisi.' });
+      return;
+    }
+    setSending(true);
+    setFormMessage({ type: '', text: '' });
+
+    try {
+      await addDoc(collection(db, 'messages'), {
+        name: formData.name,
+        email: formData.email,
+        content: formData.content,
+        isRead: false,
+        createdAt: serverTimestamp()
+      });
+      setFormMessage({ type: 'success', text: 'Pesan Anda telah berhasil terkirim! Terima kasih.' });
+      setFormData({ name: '', email: '', content: '' });
+    } catch (error) {
+      setFormMessage({ type: 'error', text: 'Gagal mengirim pesan. Silakan coba lagi nanti.' });
+      console.error("Error sending message:", error);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -89,12 +117,17 @@ const Contact = () => {
           {/* Form Pesan */}
           <div className="bg-white p-8 rounded-3xl shadow-lg">
             <h2 className="text-3xl font-bold text-emerald-900 mb-6">Kirim Pesan</h2>
+            {formMessage.text && (
+              <div className={`mb-4 p-3 rounded-lg text-sm ${formMessage.type === 'success' ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+                {formMessage.text}
+              </div>
+            )}
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div><label className="font-bold text-gray-700">Nama Anda</label><input type="text" placeholder="Nama Lengkap" className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
-              <div><label className="font-bold text-gray-700">Email Anda</label><input type="email" placeholder="email@anda.com" className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" /></div>
-              <div><label className="font-bold text-gray-700">Pesan</label><textarea placeholder="Tulis pesan Anda di sini..." className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 h-32"></textarea></div>
-              <button type="submit" className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-800 transition-colors">
-                <Send size={18} /> Kirim Pesan
+              <div><label className="font-bold text-gray-700">Nama Anda</label><input type="text" name="name" value={formData.name} onChange={handleFormChange} placeholder="Nama Lengkap" className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required /></div>
+              <div><label className="font-bold text-gray-700">Email Anda</label><input type="email" name="email" value={formData.email} onChange={handleFormChange} placeholder="email@anda.com" className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required /></div>
+              <div><label className="font-bold text-gray-700">Pesan</label><textarea name="content" value={formData.content} onChange={handleFormChange} placeholder="Tulis pesan Anda di sini..." className="w-full p-3 mt-2 bg-gray-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 h-32" required></textarea></div>
+              <button type="submit" disabled={sending} className="w-full bg-emerald-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-emerald-800 transition-colors disabled:opacity-50">
+                <Send size={18} /> {sending ? 'Mengirim...' : 'Kirim Pesan'}
               </button>
             </form>
           </div>

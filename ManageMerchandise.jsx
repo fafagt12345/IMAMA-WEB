@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { db } from './config';
-import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, onSnapshot } from 'firebase/firestore';
-import { ShoppingCart, Trash2, Edit, Plus, Package, PackageCheck, PackageX, Star } from 'lucide-react';
+import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy, onSnapshot, getDoc } from 'firebase/firestore';
+import { ShoppingCart, Trash2, Edit, Plus, Package, PackageCheck, PackageX, Star, Save, Instagram, Phone } from 'lucide-react';
 
 const ManageMerchandise = () => {
   const [products, setProducts] = useState([]);
+  const [contactInfo, setContactInfo] = useState({ instagram_ekraf: '', phone: '' });
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -18,18 +19,37 @@ const ManageMerchandise = () => {
   const [photo, setPhoto] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [contactLoading, setContactLoading] = useState(false);
 
   useEffect(() => {
     const q = query(collection(db, 'merchandise'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
     });
-    return () => unsubscribe();
+
+    const fetchContact = async () => {
+      const docRef = doc(db, 'settings', 'contact');
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setContactInfo({ instagram_ekraf: data.instagram_ekraf || '', phone: data.phone || '' });
+      }
+    };
+    fetchContact();
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
+  const handleContactChange = (e) => {
+    const { name, value } = e.target;
+    setContactInfo(prev => ({ ...prev, [name]: value }));
   };
 
   const resetForm = () => {
@@ -80,11 +100,35 @@ const ManageMerchandise = () => {
     }
   };
 
+  const handleSaveContactInfo = async (e) => {
+    e.preventDefault();
+    setContactLoading(true);
+    try {
+      await updateDoc(doc(db, 'settings', 'contact'), {
+        instagram_ekraf: contactInfo.instagram_ekraf,
+        phone: contactInfo.phone,
+        updatedAt: serverTimestamp()
+      });
+      alert('Info kontak pemesanan berhasil diperbarui!');
+    } catch (err) {
+      alert("Error: " + err.message);
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
   return (
     <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold text-emerald-900 mb-8 flex items-center gap-3"><ShoppingCart /> Kelola Merchandise</h1>
         
+        <form onSubmit={handleSaveContactInfo} className="bg-white p-6 rounded-2xl shadow-sm mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 border border-gray-100 items-end">
+          <h2 className="md:col-span-3 text-lg font-semibold text-emerald-800 border-b pb-2">Pengaturan Pemesanan</h2>
+          <div className="relative"><label className="text-xs font-bold text-gray-500 absolute -top-2 left-3 bg-white px-1">Nomor WhatsApp</label><div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Phone size={16}/></div><input type="text" name="phone" placeholder="628..." value={contactInfo.phone} onChange={handleContactChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl" /></div>
+          <div className="relative"><label className="text-xs font-bold text-gray-500 absolute -top-2 left-3 bg-white px-1">Instagram Ekraf</label><div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"><Instagram size={16}/></div><input type="text" name="instagram_ekraf" placeholder="username ig" value={contactInfo.instagram_ekraf} onChange={handleContactChange} className="w-full p-3 pl-10 bg-gray-50 border rounded-xl" /></div>
+          <button type="submit" disabled={contactLoading} className="bg-blue-600 text-white py-3 px-6 rounded-xl font-bold flex items-center justify-center gap-2 h-full">{contactLoading ? 'Menyimpan...' : <><Save size={16}/> Simpan Kontak</>}</button>
+        </form>
+
         <form id="merch-form" onSubmit={handleSubmit} className="bg-white p-6 rounded-2xl shadow-sm mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 border border-gray-100">
           <h2 className="md:col-span-2 text-lg font-semibold text-emerald-800 border-b pb-2">{editingId ? 'Edit Produk' : 'Tambah Produk Baru'}</h2>
           

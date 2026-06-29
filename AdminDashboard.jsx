@@ -9,6 +9,8 @@ import {
   Trophy,
   Users2,
   ShoppingCart,
+  MessageSquare,
+  Mail,
   Package,
 } from 'lucide-react';
 
@@ -30,6 +32,7 @@ const AdminDashboard = () => {
   const [subDepartments, setSubDepartments] = useState([]);
   const [heroMeta, setHeroMeta] = useState(null);
   const [merchandise, setMerchandise] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -54,6 +57,10 @@ const AdminDashboard = () => {
       setMerchandise(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
     });
 
+    const unsubMessages = onSnapshot(query(collection(db, 'messages'), orderBy('createdAt', 'desc'), limit(5)), (snapshot) => {
+      setMessages(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    });
+
     setLoading(false);
 
     return () => {
@@ -62,6 +69,7 @@ const AdminDashboard = () => {
       unsubMembers();
       unsubHero();
       unsubMerch();
+      unsubMessages();
     };
   }, []);
 
@@ -141,7 +149,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-1">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <div>
@@ -163,6 +171,30 @@ const AdminDashboard = () => {
                 </div>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.35em] text-emerald-600">Kotak Masuk</p>
+              <h2 className="text-xl font-bold text-slate-900">Pesan Terbaru</h2>
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-700"><Mail size={14} /> {messages.filter(m => !m.isRead).length} Belum Dibaca</div>
+          </div>
+          <div className="space-y-3">
+            {messages.length > 0 ? messages.slice(0, 3).map((msg) => (
+              <article key={msg.id} className={`rounded-2xl border p-4 transition ${!msg.isRead ? 'border-sky-200 bg-sky-50/60' : 'border-slate-200 bg-slate-50'}`}>
+                <div className="flex items-start gap-3">
+                  <div className={`mt-1 rounded-xl p-2 text-white shadow-sm ${!msg.isRead ? 'bg-sky-500' : 'bg-slate-400'}`}><MessageSquare size={16} /></div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-sm font-semibold text-slate-900">{msg.name} <span className="font-normal text-slate-500">&lt;{msg.email}&gt;</span></h3>
+                    <p className="mt-1 text-sm text-slate-600 line-clamp-2">{msg.content}</p>
+                    <p className="mt-2 text-xs text-slate-500">{formatDate(msg.createdAt)}</p>
+                  </div>
+                </div>
+              </article>
+            )) : <p className="text-sm text-slate-500 italic text-center py-4">Belum ada pesan masuk.</p>}
           </div>
         </section>
       </div>
