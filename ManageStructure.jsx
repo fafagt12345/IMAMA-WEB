@@ -12,7 +12,7 @@ const ManageStructure = () => {
   const [formData, setFormData] = useState({
     name: '',
     prodi: '',
-    position: 'Staff', // Jabatan: Ketua, Wakil, Staff
+    position: '', // Jabatan: Ketua, Wakil, Staff
     departmentId: '',
     photoUrl: '',
   });
@@ -20,19 +20,8 @@ const ManageStructure = () => {
   const [editingId, setEditingId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Validasi Ketua & Wakil per departemen
-  const hasKetua = useMemo(() => {
-    if (!formData.departmentId) return false;
-    return members.some(m => m.position === 'Ketua' && m.departmentId === formData.departmentId && m.id !== editingId);
-  }, [members, formData.departmentId, editingId]);
-  const hasWakil = useMemo(() => {
-    if (!formData.departmentId) return false;
-    return members.some(m => m.position === 'Wakil' && m.departmentId === formData.departmentId && m.id !== editingId);
-  }, [members, formData.departmentId, editingId]);
-
   const resetForm = () => {
-    setFormData({ name: '', prodi: '', position: 'Staff', departmentId: '', photoUrl: '' });
+    setFormData({ name: '', prodi: '', position: '', departmentId: '', photoUrl: '' });
     setPhoto(null);
     setEditingId(null);
     setError('');
@@ -68,16 +57,6 @@ const ManageStructure = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    if (formData.position === 'Ketua' && hasKetua && formData.departmentId) {
-      setError('Ketua untuk departemen ini sudah ada. Anda tidak bisa menambahkan lagi.');
-      return;
-    }
-    if (formData.position === 'Wakil' && hasWakil && formData.departmentId) {
-      setError('Wakil sudah ada. Anda tidak bisa menambahkan wakil lagi.');
-      return;
-    }
-
     setIsLoading(true);
     try {
       let photoUrl = formData.photoUrl;
@@ -124,12 +103,7 @@ const ManageStructure = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input type="text" name="name" placeholder="Nama Lengkap" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
             <input type="text" name="prodi" placeholder="Program Studi" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
-            
-            <select name="position" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} className="p-3 bg-gray-50 border rounded-xl">
-              <option value="Ketua" disabled={hasKetua}>Ketua Departemen</option>
-              <option value="Wakil" disabled={hasWakil}>Wakil Departemen</option>
-              <option value="Staff">Staff</option>
-            </select>
+            <input type="text" name="position" placeholder="Jabatan (Contoh: Ketua Departemen)" value={formData.position} onChange={(e) => setFormData({ ...formData, position: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required />
 
             <select name="departmentId" value={formData.departmentId} onChange={(e) => setFormData({ ...formData, departmentId: e.target.value })} className="p-3 bg-gray-50 border rounded-xl" required>
               <option value="">Pilih Departemen</option>
