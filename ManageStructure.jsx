@@ -5,8 +5,8 @@ import { useFetch } from './hooks/useFetch';
 import { Users, Edit, Trash2, UserPlus, X } from 'lucide-react';
 
 const ManageStructure = () => {
-  const { data: members = [], loading: fetchLoading } = useFetch('members', 'name');
-  const { data: departments = [] } = useFetch('departments', 'name');
+  const { data: members = [], loading: fetchLoading } = useFetch('members', 'createdAt', 'asc');
+  const { data: departments = [] } = useFetch('departments', 'order', 'asc');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -139,7 +139,10 @@ const ManageStructure = () => {
 
             return (
               <div key={dept.id} className="bg-white rounded-xl shadow-md overflow-hidden">
-                <h3 className="p-4 bg-emerald-50 text-emerald-900 font-bold text-lg">{dept.name}</h3>
+                <h3 className="p-4 bg-emerald-50 text-emerald-900 font-bold text-lg flex justify-between items-center">
+                  <span>{dept.name}</span>
+                  <span className="text-sm font-medium bg-emerald-200 text-emerald-800 px-2 py-1 rounded-full">{deptMembers.length} Anggota</span>
+                </h3>
                 <table className="w-full text-left">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr>
