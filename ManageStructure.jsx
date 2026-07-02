@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { db, storage } from './config';
+import { db } from './config';
 import { collection, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 import { useFetch } from './hooks/useFetch';
 import { Users, Edit, Trash2, UserPlus, X } from 'lucide-react';
 
@@ -43,14 +42,6 @@ const ManageStructure = () => {
   const handleDelete = async (id, photoUrl) => {
     if (window.confirm("Yakin ingin menghapus anggota ini?")) {
       await deleteDoc(doc(db, 'members', id));
-      if (photoUrl) {
-        try {
-          const photoRef = ref(storage, photoUrl);
-          await deleteObject(photoRef);
-        } catch (err) {
-          console.error("Gagal menghapus foto lama:", err);
-        }
-      }
     }
   };
 
@@ -61,9 +52,23 @@ const ManageStructure = () => {
     try {
       let photoUrl = formData.photoUrl;
       if (photo) {
-        const storageRef = ref(storage, `members/${Date.now()}_${photo.name}`);
-        await uploadBytes(storageRef, photo);
-        photoUrl = await getDownloadURL(storageRef);
+        const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+        const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
+
+        if (!CLOUD_NAME || !UPLOAD_PRESET) {
+          throw new Error('Konfigurasi Cloudinary (ENV) belum diatur.');
+        }
+
+        const cloudFormData = new FormData();
+        cloudFormData.append('file', photo);
+        cloudFormData.append('upload_preset', UPLOAD_PRESET);
+
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+          method: 'POST',
+          body: cloudFormData,
+        });
+        const data = await res.json();
+        photoUrl = data.secure_url;
       }
 
       const memberData = {
